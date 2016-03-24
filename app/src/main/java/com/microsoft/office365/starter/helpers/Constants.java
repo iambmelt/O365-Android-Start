@@ -5,21 +5,17 @@
 package com.microsoft.office365.starter.helpers;
 
 public interface Constants {
-    public static final String AUTHORITY_URL = "https://login.windows.net/common";
-    public static final String DISCOVERY_RESOURCE_URL = "https://api.office.com/discovery/v1.0/me/";
-    public static final String DISCOVERY_RESOURCE_ID = "https://api.office.com/discovery/";
-    public static final String MYFILES_CAPABILITY = "MyFiles";
-    public static final String CALENDAR_CAPABILITY = "Calendar";
-    public static final String MAIL_CAPABILITY = "Mail";
-    public static final String CALENDER_ID = "Calendar";
+    String AUTHORITY_URL = "https://login.windows.net/common";
+    String DISCOVERY_RESOURCE_URL = "https://api.office.com/discovery/v1.0/me/";
+    String DISCOVERY_RESOURCE_ID = "https://api.office.com/discovery/";
+    String MYFILES_CAPABILITY = "MyFiles";
+    String CALENDAR_CAPABILITY = "Calendar";
+    String MAIL_CAPABILITY = "Mail";
+    String CALENDER_ID = "Calendar";
     // Update these two constants with the values for your application:
-    public static final String CLIENT_ID = "<Your client ID HERE>";
-    public static final String REDIRECT_URI = "<Your redirect URI HERE>";
-    public static final String MAIL_OPERATION_ADD = "Add";
-    public static final String MAIL_OPERATION_DELETE = "Delete";
-    public static final String MAIL_OPERATION_RESULT_SUCCESS = "Added";
-    public static final String MAIL_OPERATION_RESULT_FAIL = "Failed";
-    public static final String MAIL_DETAIL_FRAGMENT_TAG = "mail_detail_fragment_tag";
+    String CLIENT_ID = "<Your client ID HERE>";
+    String REDIRECT_URI = "<Your redirect URI HERE>";
+    String MAIL_DETAIL_FRAGMENT_TAG = "mail_detail_fragment_tag";
 }
 
 // *********************************************************
