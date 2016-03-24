@@ -17,9 +17,6 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.microsoft.aad.adal.AuthenticationSettings;
-import com.microsoft.discoveryservices.ServiceInfo;
-import com.microsoft.discoveryservices.odata.DiscoveryClient;
-import com.microsoft.fileservices.odata.SharePointClient;
 import com.microsoft.office365.starter.Calendar.O365CalendarModel;
 import com.microsoft.office365.starter.Email.O365MailItemsModel;
 import com.microsoft.office365.starter.FilesFolders.O365FileListModel;
@@ -27,8 +24,12 @@ import com.microsoft.office365.starter.FilesFolders.O365FileModel;
 import com.microsoft.office365.starter.helpers.AuthenticationController;
 import com.microsoft.office365.starter.helpers.Constants;
 import com.microsoft.office365.starter.interfaces.OnServicesDiscoveredListener;
-import com.microsoft.outlookservices.odata.OutlookClient;
-import com.microsoft.services.odata.impl.DefaultDependencyResolver;
+import com.microsoft.services.discovery.ServiceInfo;
+import com.microsoft.services.discovery.fetchers.DiscoveryClient;
+import com.microsoft.services.files.fetchers.FilesClient;
+import com.microsoft.services.orc.core.DependencyResolver;
+import com.microsoft.services.orc.resolvers.DefaultDependencyResolver;
+import com.microsoft.services.outlook.fetchers.OutlookClient;
 
 import java.io.UnsupportedEncodingException;
 import java.util.List;
@@ -45,7 +46,7 @@ public class O365APIsStart_Application extends Application {
     private O365MailItemsModel mMailItemsModel;
     private ArrayAdapter<O365FileModel> mFileAdapterList;
     private List<ServiceInfo> mServices;
-    private SharePointClient mFileClient;
+    private FilesClient mFileClient;
     private OutlookClient mCalendarClient;
     private OutlookClient mMailClient;
     private OnServicesDiscoveredListener mOnServicesDiscoveredResultListener;
@@ -110,13 +111,13 @@ public class O365APIsStart_Application extends Application {
 
     public void discoverServices(final Activity currentActivity) {
         AuthenticationController.getInstance().setResourceId(Constants.DISCOVERY_RESOURCE_ID);
-        DefaultDependencyResolver dependencyResolver = (DefaultDependencyResolver) AuthenticationController
+        DependencyResolver dependencyResolver = AuthenticationController
                 .getInstance().getDependencyResolver();
         DiscoveryClient discoveryClient = new DiscoveryClient(Constants.DISCOVERY_RESOURCE_URL, dependencyResolver);
 
         try {
             ListenableFuture<List<ServiceInfo>> services = discoveryClient
-                    .getservices().read();
+                    .getServices().read();
             Futures.addCallback(services,
                     new FutureCallback<List<ServiceInfo>>() {
                         @Override
@@ -217,7 +218,7 @@ public class O365APIsStart_Application extends Application {
         if (mServices == null)
             return null;
         for (ServiceInfo service : mServices)
-            if (service.getcapability().equals(capability))
+            if (service.getCapability().equals(capability))
                 return service;
 
         throw new NoSuchElementException(
@@ -231,18 +232,18 @@ public class O365APIsStart_Application extends Application {
      *
      * @return the current list client
      */
-    public SharePointClient getFileClient() {
+    public FilesClient getFileClient() {
         if (mFileClient != null)
             return mFileClient;
 
         ServiceInfo discoveryInfo = getService(Constants.MYFILES_CAPABILITY);
-        String serviceEndpointUri = discoveryInfo.getserviceEndpointUri();
-        String serviceResourceId = discoveryInfo.getserviceResourceId();
+        String serviceEndpointUri = discoveryInfo.getServiceEndpointUri();
+        String serviceResourceId = discoveryInfo.getServiceResourceId();
 
         AuthenticationController.getInstance().setResourceId(serviceResourceId);
         DefaultDependencyResolver dependencyResolver = (DefaultDependencyResolver) AuthenticationController.getInstance().getDependencyResolver();
 
-        mFileClient = new SharePointClient(serviceEndpointUri, dependencyResolver);
+        mFileClient = new FilesClient(serviceEndpointUri, dependencyResolver);
         return mFileClient;
     }
 
@@ -253,8 +254,8 @@ public class O365APIsStart_Application extends Application {
             return mCalendarClient;
 
         ServiceInfo discoveryInfo = getService(Constants.CALENDAR_CAPABILITY);
-        String serviceEndpointUri = discoveryInfo.getserviceEndpointUri();
-        String serviceResourceId = discoveryInfo.getserviceResourceId();
+        String serviceEndpointUri = discoveryInfo.getServiceEndpointUri();
+        String serviceResourceId = discoveryInfo.getServiceResourceId();
 
         AuthenticationController.getInstance().setResourceId(serviceResourceId);
         DefaultDependencyResolver dependencyResolver = (DefaultDependencyResolver) AuthenticationController.getInstance().getDependencyResolver();
@@ -270,8 +271,8 @@ public class O365APIsStart_Application extends Application {
             return mMailClient;
 
         ServiceInfo discoveryInfo = getService(Constants.MAIL_CAPABILITY);
-        String serviceEndpointUri = discoveryInfo.getserviceEndpointUri();
-        String serviceResourceId = discoveryInfo.getserviceResourceId();
+        String serviceEndpointUri = discoveryInfo.getServiceEndpointUri();
+        String serviceResourceId = discoveryInfo.getServiceResourceId();
 
         AuthenticationController.getInstance().setResourceId(serviceResourceId);
         DefaultDependencyResolver dependencyResolver = (DefaultDependencyResolver) AuthenticationController.getInstance().getDependencyResolver();

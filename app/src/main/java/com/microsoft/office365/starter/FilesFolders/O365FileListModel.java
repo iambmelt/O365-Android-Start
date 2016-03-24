@@ -4,14 +4,6 @@
 
 package com.microsoft.office365.starter.FilesFolders;
 
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-
 import android.app.Activity;
 import android.util.Log;
 import android.widget.ListView;
@@ -19,15 +11,19 @@ import android.widget.ListView;
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.microsoft.fileservices.Item;
 import com.microsoft.office365.starter.O365APIsStart_Application;
 import com.microsoft.office365.starter.helpers.APIErrorMessageHelper;
 import com.microsoft.office365.starter.interfaces.OnOperationCompleteListener;
 import com.microsoft.office365.starter.interfaces.OnOperationCompleteListener.OperationResult;
-import com.microsoft.fileservices.odata.SharePointClient;
+import com.microsoft.services.files.Item;
+import com.microsoft.services.files.fetchers.FilesClient;
 
-public class O365FileListModel
-{
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ExecutionException;
+
+public class O365FileListModel {
     private O365APIsStart_Application mApplication;
     private OnOperationCompleteListener mEventOperationCompleteListener;
 
@@ -42,14 +38,13 @@ public class O365FileListModel
 
     public void postUpdatedFileContents(
             final O365APIsStart_Application application,
-            final Activity currentActivity, SharePointClient fileClient,
+            final Activity currentActivity, FilesClient fileClient,
             final String updatedContents) {
-        ListenableFuture<Void> future = fileClient.getfiles()
+        ListenableFuture<Void> future = fileClient.getFiles()
                 .getById(application.getDisplayedFile().getId()).asFile()
                 .putContent(updatedContents.getBytes());
 
-        Futures.addCallback(future, new FutureCallback<Void>()
-        {
+        Futures.addCallback(future, new FutureCallback<Void>() {
             @Override
             public void onFailure(Throwable t) {
                 Log.e("Asset", t.getMessage());
@@ -79,14 +74,13 @@ public class O365FileListModel
     public void postUploadFileToServer(final O365APIsStart_Application application,
                                        final Activity currentActivity,
                                        final O365FileModel fileToUpload,
-                                       final SharePointClient fileClient) {
+                                       final FilesClient fileClient) {
         final Item newFile = new Item();
-        newFile.settype("File");
-        newFile.setname(fileToUpload.getName());
+        newFile.setType("File");
+        newFile.setName(fileToUpload.getName());
 
-        ListenableFuture<Item> future = fileClient.getfiles().add(newFile);
-        Futures.addCallback(future, new FutureCallback<Item>()
-        {
+        ListenableFuture<Item> future = fileClient.getFiles().add(newFile);
+        Futures.addCallback(future, new FutureCallback<Item>() {
             @Override
             public void onFailure(Throwable t) {
                 Log.e("Asset", t.getMessage());
@@ -101,8 +95,8 @@ public class O365FileListModel
             @Override
             public void onSuccess(final Item item) {
                 try {
-                    fileClient.getfiles()
-                            .getById(item.getid())
+                    fileClient.getFiles()
+                            .getById(item.getId())
                             .asFile()
                             .putContent(
                                     fileToUpload
@@ -111,8 +105,7 @@ public class O365FileListModel
                             )
                             .get();
 
-                    currentActivity.runOnUiThread(new Runnable()
-                    {
+                    currentActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             application.getFileListViewState()
@@ -139,13 +132,12 @@ public class O365FileListModel
     public void postNewFileToServer(
             final O365APIsStart_Application application,
             final Activity currentActivity, String fileName,
-            final byte[] fileContents, final SharePointClient fileClient) {
+            final byte[] fileContents, final FilesClient fileClient) {
         final Item newFile = new Item();
-        newFile.settype("File");
-        newFile.setname(fileName);
-        ListenableFuture<Item> future = fileClient.getfiles().add(newFile);
-        Futures.addCallback(future, new FutureCallback<Item>()
-        {
+        newFile.setType("File");
+        newFile.setName(fileName);
+        ListenableFuture<Item> future = fileClient.getFiles().add(newFile);
+        Futures.addCallback(future, new FutureCallback<Item>() {
             @Override
             public void onFailure(Throwable t) {
                 Log.e("Asset", t.getMessage());
@@ -163,14 +155,13 @@ public class O365FileListModel
                     //Put the content byte array into the new Item object
                     //and send back to server synchronously
                     fileClient
-                            .getfiles()
-                            .getById(item.getid())
+                            .getFiles()
+                            .getById(item.getId())
                             .asFile()
                             .putContent(fileContents)
                             .get();
 
-                    currentActivity.runOnUiThread(new Runnable()
-                    {
+                    currentActivity.runOnUiThread(new Runnable() {
 
                         @Override
                         public void run() {
@@ -200,7 +191,7 @@ public class O365FileListModel
     public void postNewFileToServer(
             final O365APIsStart_Application application,
             final Activity currentActivity, String fileName,
-            final String fileContents, final SharePointClient fileClient) {
+            final String fileContents, final FilesClient fileClient) {
 
         //Convert string to byte array and call the other overload of
         //postNewFileToServer
@@ -229,7 +220,7 @@ public class O365FileListModel
     }
 
     public void postDeleteSelectedFileFromServer(
-            final Activity currentActivity, SharePointClient fileClient,
+            final Activity currentActivity, FilesClient fileClient,
             int itemPosition) {
         if (itemPosition == ListView.INVALID_POSITION) {
             // Notify caller that no file was selected for the delete
@@ -247,12 +238,11 @@ public class O365FileListModel
 
         final O365APIsStart_Application application = (O365APIsStart_Application) currentActivity
                 .getApplication();
-        ListenableFuture future = fileClient.getfiles()
+        ListenableFuture future = fileClient.getFiles()
                 .getById(fileToDelete.getId())
                 .addHeader("If-Match", "*").delete();
 
-        Futures.addCallback(future, new FutureCallback()
-        {
+        Futures.addCallback(future, new FutureCallback() {
             @Override
             public void onFailure(Throwable t) {
                 Log.e("Asset", t.getMessage());
@@ -265,8 +255,7 @@ public class O365FileListModel
 
             @Override
             public void onSuccess(Object obj) {
-                currentActivity.runOnUiThread(new Runnable()
-                {
+                currentActivity.runOnUiThread(new Runnable() {
 
                     @Override
                     public void run() {
@@ -286,12 +275,11 @@ public class O365FileListModel
     }
 
     public void getFilesAndFoldersFromService(final Activity currentActivity,
-                                              SharePointClient fileClient) {
+                                              FilesClient fileClient) {
         final ArrayList<O365FileModel> fileList = new ArrayList<O365FileModel>();
-        ListenableFuture<List<Item>> future = fileClient.getfiles().read();
+        ListenableFuture<List<Item>> future = fileClient.getFiles().read();
 
-        Futures.addCallback(future, new FutureCallback<List<Item>>()
-        {
+        Futures.addCallback(future, new FutureCallback<List<Item>>() {
             @Override
             public void onFailure(Throwable t) {
                 Log.e("Asset", t.getMessage());
@@ -312,8 +300,7 @@ public class O365FileListModel
 
                 // we're not on the UI thread right now, so call back
                 // to the UI thread to update the ListView and set text
-                currentActivity.runOnUiThread(new Runnable()
-                {
+                currentActivity.runOnUiThread(new Runnable() {
 
                     @Override
                     public void run() {
@@ -344,13 +331,12 @@ public class O365FileListModel
         if (fileName != null
                 && (fileName.contains(".txt") || fileName.contains(".xml"))) {
             ListenableFuture<byte[]> future = mApplication.getFileClient()
-                    .getfiles()
+                    .getFiles()
                     .getById(fileItem.getId())
                     .asFile()
                     .getContent();
 
-            Futures.addCallback(future, new FutureCallback<byte[]>()
-            {
+            Futures.addCallback(future, new FutureCallback<byte[]>() {
                 @Override
                 public void onFailure(Throwable t) {
                     Log.e("Asset", t.getMessage());
@@ -364,8 +350,7 @@ public class O365FileListModel
 
                 @Override
                 public void onSuccess(final byte[] fileBytes) {
-                    currentActivity.runOnUiThread(new Runnable()
-                    {
+                    currentActivity.runOnUiThread(new Runnable() {
                         @Override
                         public void run() {
                             try {

@@ -24,119 +24,115 @@ import com.microsoft.office365.starter.Email.MailItemListActivity;
 import com.microsoft.office365.starter.FilesFolders.FileListActivity;
 import com.microsoft.office365.starter.O365APIsStart_Application;
 import com.microsoft.office365.starter.R;
+import com.microsoft.office365.starter.helpers.AsyncController;
 import com.microsoft.office365.starter.helpers.AuthenticationController;
 import com.microsoft.office365.starter.helpers.Constants;
-import com.microsoft.office365.starter.helpers.AsyncController;
 import com.microsoft.office365.starter.helpers.ProgressDialogHelper;
 import com.microsoft.office365.starter.interfaces.MainActivityCoordinator;
 import com.microsoft.office365.starter.interfaces.OnServicesDiscoveredListener;
 
-import java.util.concurrent.Callable;
-
 import java.net.URI;
 import java.util.UUID;
+import java.util.concurrent.Callable;
 
 public class MainActivity extends Activity implements MainActivityCoordinator,
         OnServicesDiscoveredListener {
 
-	private O365APIsStart_Application mApplication;
-	private MainButtonsFragment mButtonsFragment;
-	private Menu mMenu;
+    private O365APIsStart_Application mApplication;
+    private MainButtonsFragment mButtonsFragment;
+    private Menu mMenu;
     private ProgressDialog mDialogSignIn;
     private ProgressDialog mDialogDiscoverServices;
 
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.activity_main);
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.activity_main);
 
-		mApplication = (O365APIsStart_Application) getApplication();
-		mApplication.setOnServicesDiscoveredResultListener(this);
+        mApplication = (O365APIsStart_Application) getApplication();
+        mApplication.setOnServicesDiscoveredResultListener(this);
 
-		// When the app starts, the buttons should be disabled until the user
-		// signs in to Office 365
-		FragmentManager fragmentManager = getFragmentManager();
-		mButtonsFragment = (MainButtonsFragment) fragmentManager
-				.findFragmentById(R.id.buttonsFragment);
-		mButtonsFragment.setButtonsEnabled(mApplication.userIsAuthenticated());
-	}
+        // When the app starts, the buttons should be disabled until the user
+        // signs in to Office 365
+        FragmentManager fragmentManager = getFragmentManager();
+        mButtonsFragment = (MainButtonsFragment) fragmentManager
+                .findFragmentById(R.id.buttonsFragment);
+        mButtonsFragment.setButtonsEnabled(mApplication.userIsAuthenticated());
+    }
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		// Inflate the menu; this adds items to the action bar if it is present.
-		getMenuInflater().inflate(R.menu.main, menu);
-		mMenu = menu;
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.main, menu);
+        mMenu = menu;
 
-		if (mApplication.userIsAuthenticated()) {
+        if (mApplication.userIsAuthenticated()) {
             SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
             String displayName = sharedPref.getString("DisplayName", "");
 
-			MenuItem signInMenuItem = mMenu.findItem(R.id.menu_signin);
-			signInMenuItem.setIcon(R.drawable.user_default_signedin);
+            MenuItem signInMenuItem = mMenu.findItem(R.id.menu_signin);
+            signInMenuItem.setIcon(R.drawable.user_default_signedin);
             signInMenuItem.setTitle(displayName);
         }
 
-		return true;
-	}
+        return true;
+    }
 
-	@Override
-	public boolean onOptionsItemSelected(MenuItem item) {
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
 
-		try {
-			switch (item.getItemId()) {
-			case R.id.menu_clear_credentials:
-				clearCredentials();
-				return true;
-			case R.id.menu_signin:
-                //check that client id and redirect have been set correctly
-                try
-                {
-                    UUID.fromString(Constants.CLIENT_ID);
-                    URI.create(Constants.REDIRECT_URI);
-                }
-                catch (IllegalArgumentException e)
-                {
-                    Toast.makeText(
-                            this
-                            , getString(R.string.warning_clientid_redirecturi_incorrect)
-                            , Toast.LENGTH_LONG).show();
+        try {
+            switch (item.getItemId()) {
+                case R.id.menu_clear_credentials:
+                    clearCredentials();
                     return true;
-                }
+                case R.id.menu_signin:
+                    //check that client id and redirect have been set correctly
+                    try {
+                        UUID.fromString(Constants.CLIENT_ID);
+                        URI.create(Constants.REDIRECT_URI);
+                    } catch (IllegalArgumentException e) {
+                        Toast.makeText(
+                                this
+                                , getString(R.string.warning_clientid_redirecturi_incorrect)
+                                , Toast.LENGTH_LONG).show();
+                        return true;
+                    }
 
-				signIn_OnClick();
-				return true;
-			default:
-				return super.onOptionsItemSelected(item);
-			}
+                    signIn_OnClick();
+                    return true;
+                default:
+                    return super.onOptionsItemSelected(item);
+            }
 
-		} catch (Throwable t) {
+        } catch (Throwable t) {
             if (t.getMessage() == null)
-			    Log.e("Asset", " ");
+                Log.e("Asset", " ");
             else
                 Log.e("Asset", t.getMessage());
-		}
-		return true;
-	}
+        }
+        return true;
+    }
 
-	private void clearCredentials() {
-		mApplication.clearClientObjects();
-		mApplication.clearCookies();
+    private void clearCredentials() {
+        mApplication.clearClientObjects();
+        mApplication.clearCookies();
         mApplication.clearTokens();
-		userSignedOut();
-	}
+        userSignedOut();
+    }
 
-	protected void userSignedOut() {
-		mButtonsFragment.setButtonsEnabled(false);
+    protected void userSignedOut() {
+        mButtonsFragment.setButtonsEnabled(false);
 
-		MenuItem signInMenuItem = mMenu.findItem(R.id.menu_signin);
-		signInMenuItem.setIcon(R.drawable.user_signedout);
+        MenuItem signInMenuItem = mMenu.findItem(R.id.menu_signin);
+        signInMenuItem.setIcon(R.drawable.user_signedout);
 
-		signInMenuItem.setTitle(R.string.MainActivity_SignInButtonText);
-	}
+        signInMenuItem.setTitle(R.string.MainActivity_SignInButtonText);
+    }
 
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
         AuthenticationController
                 .getInstance()
                 .getAuthenticationContext()
@@ -144,17 +140,17 @@ public class MainActivity extends Activity implements MainActivityCoordinator,
                         requestCode
                         , resultCode
                         , data);
-	}
+    }
 
-	public void signIn_OnClick() {
+    public void signIn_OnClick() {
         mDialogSignIn = ProgressDialogHelper.showProgressDialog(
                 MainActivity.this, "Authenticating to Office 365...",
                 "Please wait.");
 
         AuthenticationController.getInstance().setContextActivity(this);
-		SettableFuture<Boolean> authenticated = AuthenticationController.getInstance().initialize();
+        SettableFuture<Boolean> authenticated = AuthenticationController.getInstance().initialize();
 
-		Futures.addCallback(authenticated, new FutureCallback<Boolean>() {
+        Futures.addCallback(authenticated, new FutureCallback<Boolean>() {
             @Override
             public void onSuccess(Boolean result) {
                 Log.i("MainActivity", "Authentication successful");
@@ -185,8 +181,9 @@ public class MainActivity extends Activity implements MainActivityCoordinator,
                         "Please wait.");
                 mApplication.discoverServices(MainActivity.this);
             }
-			@Override
-			public void onFailure(final Throwable t) {
+
+            @Override
+            public void onFailure(final Throwable t) {
                 Log.e("MainActivity", t.getMessage());
 
                 AsyncController.getInstance().postAsyncTask(new Callable<Void>() {
@@ -208,29 +205,29 @@ public class MainActivity extends Activity implements MainActivityCoordinator,
                         return null;
                     }
                 });
-			}
-		});
-	}
+            }
+        });
+    }
 
-	@Override
-	public void onServiceSelected(String capability) {
-		Intent intentToActivate = null;
-		if (capability.equals(Constants.MYFILES_CAPABILITY)) {
-			intentToActivate = new Intent(this, FileListActivity.class);
-		}
-		if (capability.equals(Constants.CALENDAR_CAPABILITY)) {
-			intentToActivate = new Intent(this, CalendarEventListActivity.class);
-		}
+    @Override
+    public void onServiceSelected(String capability) {
+        Intent intentToActivate = null;
+        if (capability.equals(Constants.MYFILES_CAPABILITY)) {
+            intentToActivate = new Intent(this, FileListActivity.class);
+        }
+        if (capability.equals(Constants.CALENDAR_CAPABILITY)) {
+            intentToActivate = new Intent(this, CalendarEventListActivity.class);
+        }
         if (capability.equals(Constants.MAIL_CAPABILITY)) {
             intentToActivate = new Intent(this, MailItemListActivity.class);
         }
 
-		startActivity(intentToActivate);
-	}
+        startActivity(intentToActivate);
+    }
 
-	@Override
-	public void onServicesDiscoveredEvent(Event event) {
-		if (event.servicesAreDiscovered()) {
+    @Override
+    public void onServicesDiscoveredEvent(Event event) {
+        if (event.servicesAreDiscovered()) {
             Log.i("MainActivity", "Services discovered");
             SharedPreferences sharedPref = this.getPreferences(Context.MODE_PRIVATE);
             final String displayName = sharedPref.getString("DisplayName", "");
@@ -260,7 +257,7 @@ public class MainActivity extends Activity implements MainActivityCoordinator,
                     return null;
                 }
             });
-		} else{
+        } else {
             Log.e("MainActivity", "Failed to discover services");
             AsyncController.getInstance().postAsyncTask(new Callable<Void>() {
                 @Override
@@ -282,7 +279,7 @@ public class MainActivity extends Activity implements MainActivityCoordinator,
                 }
             });
         }
-	}
+    }
 }
 // *********************************************************
 //

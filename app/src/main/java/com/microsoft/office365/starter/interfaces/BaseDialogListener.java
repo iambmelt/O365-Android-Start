@@ -7,9 +7,9 @@ package com.microsoft.office365.starter.interfaces;
 import android.app.Fragment;
 
 public interface BaseDialogListener {
-	public void onDialogPositiveClick(Fragment dialog);
+    public void onDialogPositiveClick(Fragment dialog);
 
-	public void onDialogNegativeClick(Fragment dialog);
+    public void onDialogNegativeClick(Fragment dialog);
 }
 
 // *********************************************************

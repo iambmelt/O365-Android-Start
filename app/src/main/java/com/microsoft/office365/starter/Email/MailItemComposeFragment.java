@@ -5,8 +5,8 @@
 package com.microsoft.office365.starter.Email;
 
 import android.app.Activity;
-import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,110 +19,110 @@ import com.microsoft.office365.starter.R;
 
 public class MailItemComposeFragment extends Fragment {
 
-	String mMailTo;
-	String mMailCc;
-	String mMailSubject;
-	String mMailBody;
+    String mMailTo;
+    String mMailCc;
+    String mMailSubject;
+    String mMailBody;
 
-	private Callbacks mListener;
+    private Callbacks mListener;
 
-	/**
-	 * A callback interface that all activities containing this fragment must
-	 * implement. This mechanism allows activities to be notified of item
-	 * selections.
-	 */
-	public interface Callbacks {
-		/**
-		 * Callback for when an item has been selected.
-		 */
-		public void onSendMail(String mailTo, String mailCc,
-				String mailSubject, String mailBody);
+    /**
+     * A callback interface that all activities containing this fragment must
+     * implement. This mechanism allows activities to be notified of item
+     * selections.
+     */
+    public interface Callbacks {
+        /**
+         * Callback for when an item has been selected.
+         */
+        void onSendMail(String mailTo, String mailCc,
+                        String mailSubject, String mailBody);
 
-		public void onSendMailCancelled();
-	}
+        void onSendMailCancelled();
+    }
 
-	public MailItemComposeFragment() {
-	}
+    public MailItemComposeFragment() {
+    }
 
-	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-		try {
-			mListener = (Callbacks) activity;
-		} catch (ClassCastException e) {
-			throw new ClassCastException(
-					activity.toString()
-							+ " must implement Mail Compose Fragment Callbacks interface");
-		}
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mListener = (Callbacks) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(
+                    activity.toString()
+                            + " must implement Mail Compose Fragment Callbacks interface");
+        }
 
-	}
+    }
 
-	private void sendMessage(View rootView) {
-		// Get data from fields on the view
-		TextView textView = (TextView) rootView
-				.findViewById(R.id.mail_compose_to);
-		mMailTo = textView.getText().toString();
-		textView = (TextView) rootView.findViewById(R.id.mail_compose_cc);
-		mMailCc = textView.getText().toString();
-		textView = (TextView) rootView.findViewById(R.id.mail_compose_subject);
-		mMailSubject = textView.getText().toString();
-		textView = (TextView) rootView.findViewById(R.id.mail_compose_body);
-		mMailBody = textView.getText().toString();
+    private void sendMessage(View rootView) {
+        // Get data from fields on the view
+        TextView textView = (TextView) rootView
+                .findViewById(R.id.mail_compose_to);
+        mMailTo = textView.getText().toString();
+        textView = (TextView) rootView.findViewById(R.id.mail_compose_cc);
+        mMailCc = textView.getText().toString();
+        textView = (TextView) rootView.findViewById(R.id.mail_compose_subject);
+        mMailSubject = textView.getText().toString();
+        textView = (TextView) rootView.findViewById(R.id.mail_compose_body);
+        mMailBody = textView.getText().toString();
 
-		// Inform host activity which will remove this fragment and send email
-		mListener.onSendMail(mMailTo, mMailCc, mMailSubject, mMailBody);
-	}
+        // Inform host activity which will remove this fragment and send email
+        mListener.onSendMail(mMailTo, mMailCc, mMailSubject, mMailBody);
+    }
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-	}
+    }
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		final View rootView = inflater.inflate(
-				R.layout.fragment_mailitem_compose, container, false);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        final View rootView = inflater.inflate(
+                R.layout.fragment_mailitem_compose, container, false);
 
-		// Keyboard send button handler
-		EditText editText = (EditText) rootView
-				.findViewById(R.id.mail_compose_body);
-		editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
-			@Override
-			public boolean onEditorAction(TextView v, int actionId,
-					KeyEvent event) {
-				boolean handled = false;
-				if (actionId == EditorInfo.IME_ACTION_SEND) {
-					sendMessage(rootView);
-					handled = true;
-				}
-				return handled;
-			}
-		});
+        // Keyboard send button handler
+        EditText editText = (EditText) rootView
+                .findViewById(R.id.mail_compose_body);
+        editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
+            @Override
+            public boolean onEditorAction(TextView v, int actionId,
+                                          KeyEvent event) {
+                boolean handled = false;
+                if (actionId == EditorInfo.IME_ACTION_SEND) {
+                    sendMessage(rootView);
+                    handled = true;
+                }
+                return handled;
+            }
+        });
 
-		// Done button click event handler
-		rootView.findViewById(R.id.actionbar_done).setOnClickListener(
-				new View.OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						sendMessage(rootView);
-					}
-				});
+        // Done button click event handler
+        rootView.findViewById(R.id.actionbar_done).setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        sendMessage(rootView);
+                    }
+                });
 
-		// Cancel button click event handler
-		rootView.findViewById(R.id.actionbar_cancel).setOnClickListener(
-				new View.OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						// Call parent activity listener to remove this
-						// fragment.
-						mListener.onSendMailCancelled();
-						mListener = null;
-					}
-				});
-		return rootView;
-	}
+        // Cancel button click event handler
+        rootView.findViewById(R.id.actionbar_cancel).setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        // Call parent activity listener to remove this
+                        // fragment.
+                        mListener.onSendMailCancelled();
+                        mListener = null;
+                    }
+                });
+        return rootView;
+    }
 }
 // *********************************************************
 //

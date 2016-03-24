@@ -5,7 +5,7 @@
 package com.microsoft.office365.starter.interfaces;
 
 public interface MainActivityCoordinator {
-	void onServiceSelected(String capability);
+    void onServiceSelected(String capability);
 }
 // *********************************************************
 //

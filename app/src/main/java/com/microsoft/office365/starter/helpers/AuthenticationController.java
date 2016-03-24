@@ -8,20 +8,20 @@ package com.microsoft.office365.starter.helpers;
 
 import android.app.Activity;
 import android.content.Context;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.util.Log;
 
 import com.google.common.util.concurrent.SettableFuture;
 import com.microsoft.aad.adal.AuthenticationCallback;
 import com.microsoft.aad.adal.AuthenticationContext;
-import android.content.SharedPreferences;
-import android.content.SharedPreferences.Editor;
 import com.microsoft.aad.adal.AuthenticationResult;
 import com.microsoft.aad.adal.AuthenticationResult.AuthenticationStatus;
 import com.microsoft.aad.adal.PromptBehavior;
 import com.microsoft.aad.adal.UserInfo;
-import com.microsoft.services.odata.impl.ADALDependencyResolver;
-import com.microsoft.services.odata.interfaces.DependencyResolver;
-import com.microsoft.services.odata.interfaces.LogLevel;
+import com.microsoft.services.orc.core.DependencyResolver;
+import com.microsoft.services.orc.log.LogLevel;
+import com.microsoft.services.orc.resolvers.ADALDependencyResolver;
 
 /**
  * Handles setup of ADAL Dependency Resolver for use in API clients.
@@ -42,13 +42,14 @@ public class AuthenticationController {
         }
         return INSTANCE;
     }
+
     private static AuthenticationController INSTANCE;
 
     private AuthenticationController() {
         resourceId = Constants.DISCOVERY_RESOURCE_ID;
     }
 
-    private AuthenticationController(final Activity contextActivity){
+    private AuthenticationController(final Activity contextActivity) {
         this();
         this.contextActivity = contextActivity;
     }
@@ -67,6 +68,7 @@ public class AuthenticationController {
      * Change from the default Resource ID set in ServiceConstants to a different
      * resource ID.
      * This can be called at anytime without requiring another interactive prompt.
+     *
      * @param resourceId URL of resource ID to be accessed on behalf of user.
      */
     public void setResourceId(final String resourceId) {
@@ -76,6 +78,7 @@ public class AuthenticationController {
 
     /**
      * Turn on logging.
+     *
      * @param level LogLevel to set.
      */
     public void enableLogging(LogLevel level) {

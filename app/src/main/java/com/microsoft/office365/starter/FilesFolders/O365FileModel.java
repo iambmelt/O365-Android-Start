@@ -5,91 +5,92 @@
 package com.microsoft.office365.starter.FilesFolders;
 
 import android.app.Activity;
-import com.microsoft.fileservices.Item;
+
 import com.microsoft.office365.starter.O365APIsStart_Application;
 import com.microsoft.office365.starter.interfaces.OnFileChangedEventListener;
+import com.microsoft.services.files.Item;
 
 public class O365FileModel {
 
-	private OnFileChangedEventListener eventFileChangedListener;
-	private Item fileItem = null;
-	private String fileType = null;
+    private OnFileChangedEventListener eventFileChangedListener;
+    private Item fileItem = null;
+    private String fileType = null;
 
-	public String getFileType() {
-		return fileType;
-	}
+    public String getFileType() {
+        return fileType;
+    }
 
-	public Item getItem() {
-		return fileItem;
-	}
+    public Item getItem() {
+        return fileItem;
+    }
 
-	private String id;
+    private String id;
 
-	public String getId() {
-		return id;
-	}
+    public String getId() {
+        return id;
+    }
 
-	public void setId(String value) {
-		if (value != null)
-			id = value;
-	}
+    public void setId(String value) {
+        if (value != null)
+            id = value;
+    }
 
-	private String name;
+    private String name;
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String value) {
-		if (value != null)
-			name = value;
-	}
+    public void setName(String value) {
+        if (value != null)
+            name = value;
+    }
 
-	private String contents;
+    private String contents;
 
-	public String getContents() {
-		return contents;
-	}
+    public String getContents() {
+        return contents;
+    }
 
-	public void setContents(Activity currentActivity, String value) {
-		contents = value;
-		fireContentsChanged(currentActivity);
-	}
+    public void setContents(Activity currentActivity, String value) {
+        contents = value;
+        fireContentsChanged(currentActivity);
+    }
 
-	public void setFileChangedEventListener(OnFileChangedEventListener event) {
-		this.eventFileChangedListener = event;
+    public void setFileChangedEventListener(OnFileChangedEventListener event) {
+        this.eventFileChangedListener = event;
 
-	}
+    }
 
-	public O365FileModel(O365APIsStart_Application application, Item newFile) {
-		name = newFile.getname();
-		id = newFile.getid();
-		fileItem = newFile;
-		fileType = newFile.gettype();
-	}
+    public O365FileModel(O365APIsStart_Application application, Item newFile) {
+        name = newFile.getName();
+        id = newFile.getId();
+        fileItem = newFile;
+        fileType = newFile.getType();
+    }
 
-	@Override
-	public String toString() {
-		return name;
-	}
+    @Override
+    public String toString() {
+        return name;
+    }
 
-	private void fireContentsChanged(Activity currentActivity) {
-		if (eventFileChangedListener != null)
-			currentActivity.runOnUiThread(new Runnable() {
-				@Override
-				public void run() {
-					try {
-						OnFileChangedEventListener.Event event = new OnFileChangedEventListener.Event();
-						event.setEventType(OnFileChangedEventListener.Event.eventType.contentsChanged);
-						eventFileChangedListener.onFileChangedEvent(
-								O365FileModel.this, event);
-					} catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-			});
+    private void fireContentsChanged(Activity currentActivity) {
+        if (eventFileChangedListener != null)
+            currentActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        OnFileChangedEventListener.Event event = new OnFileChangedEventListener.Event();
+                        event.setEventType(OnFileChangedEventListener.Event.eventType.contentsChanged);
+                        eventFileChangedListener.onFileChangedEvent(
+                                O365FileModel.this, event);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
 
-	}
+    }
 }
 // *********************************************************
 //

@@ -5,9 +5,9 @@
 package com.microsoft.office365.starter.Calendar;
 
 import android.app.Activity;
+import android.app.ListFragment;
 import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.app.ListFragment;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
@@ -19,7 +19,7 @@ import com.microsoft.office365.starter.interfaces.OnEventsAddedListener;
  * A list fragment representing a list of CalendarEvents. This fragment also supports tablet devices
  * by allowing list items to be given an 'activated' state upon selection. This helps indicate which
  * item is currently being viewed in a {@link com.microsoft.office365.starter.Calendar.CalendarEventDetailFragment}.
- * <p>
+ * <p/>
  * Activities containing this fragment MUST implement the {@link Callbacks} interface.
  */
 public class CalendarEventListFragment extends ListFragment implements OnEventsAddedListener {
@@ -35,7 +35,9 @@ public class CalendarEventListFragment extends ListFragment implements OnEventsA
      */
     private Callbacks mCallbacks = sDummyCallbacks;
 
-    /** The m stored rotation. */
+    /**
+     * The m stored rotation.
+     */
     private int mStoredRotation;
     private ProgressDialog mDialog;
     // public O365CalendarModel mCalendarModel;
@@ -75,7 +77,7 @@ public class CalendarEventListFragment extends ListFragment implements OnEventsA
     public CalendarEventListFragment() {
     }
 
-   
+
     @Override
     public void onViewCreated(View view, Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
@@ -93,26 +95,21 @@ public class CalendarEventListFragment extends ListFragment implements OnEventsA
         getActivity().runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                if (!eventCollection.getEventCollection().isEmpty())
-                {
+                if (!eventCollection.getEventCollection().isEmpty()) {
                     mCalendarEventListFragment
                             .setListAdapter(new ArrayAdapter<O365CalendarModel.O365Calendar_Event>(
                                     mParentActivity,
                                     android.R.layout.simple_list_item_activated_1,
                                     android.R.id.text1, eventCollection.getEventCollection()));
 
-                    if (mDialog.isShowing())
-                    {
+                    if (mDialog.isShowing()) {
                         mDialog.dismiss();
                         mParentActivity.setRequestedOrientation(mStoredRotation);
                     }
                     Toast.makeText(mParentActivity, "Events loaded",
                             Toast.LENGTH_LONG).show();
-                }
-                else
-                {
-                    if (mDialog.isShowing())
-                    {
+                } else {
+                    if (mDialog.isShowing()) {
                         mDialog.dismiss();
                         mParentActivity.setRequestedOrientation(mStoredRotation);
                     }
@@ -145,13 +142,13 @@ public class CalendarEventListFragment extends ListFragment implements OnEventsA
 
     @Override
     public void onListItemClick(ListView listView, View view, int position,
-            long id) {
+                                long id) {
         super.onListItemClick(listView, view, position, id);
 
         // Notify the active callbacks interface (the activity, if the
         // fragment is attached to one) that an item has been selected.
 
-        if (getActivity() instanceof  CalendarEventListActivity)
+        if (getActivity() instanceof CalendarEventListActivity)
             mCallbacks.onItemSelected(
                     ((CalendarEventListActivity) getActivity())
                             .calendarEvents
@@ -184,7 +181,7 @@ public class CalendarEventListFragment extends ListFragment implements OnEventsA
     private void setActivatedPosition(int position) {
         if (position == ListView.INVALID_POSITION)
             getListView().setItemChecked(mActivatedPosition, false);
-         else
+        else
             getListView().setItemChecked(position, true);
 
         mActivatedPosition = position;

@@ -11,83 +11,83 @@ import android.widget.Button;
 //based on UI state.
 public class File_UI_State {
 
-	public boolean isListItemSelected = true;
-	public boolean isEditing = true;
-	public boolean isFileContentsDisplayed = true;
+    public boolean isListItemSelected = true;
+    public boolean isEditing = true;
+    public boolean isFileContentsDisplayed = true;
 
-	public Button btnGet = null;
-	public Button btnCreate = null;
-	public Button btnDelete = null;
-	public Button btnRead = null;
-	public Button btnUpdate = null;
+    public Button btnGet = null;
+    public Button btnCreate = null;
+    public Button btnDelete = null;
+    public Button btnRead = null;
+    public Button btnUpdate = null;
 
-	public MenuItem itemGet = null;
-	public MenuItem itemCreate = null;
-	public MenuItem itemDelete = null;
-	public MenuItem itemRead = null;
-	public MenuItem itemUpdate = null;
+    public MenuItem itemGet = null;
+    public MenuItem itemCreate = null;
+    public MenuItem itemDelete = null;
+    public MenuItem itemRead = null;
+    public MenuItem itemUpdate = null;
     public MenuItem itemUpload = null;
     public MenuItem itemDownload = null;
 
-	public void setEditMode(boolean mode) {
-		if (mode == isEditing)
-			return;
-		isEditing = mode;
-		if (btnGet != null)
-			btnGet.setEnabled(!isEditing);
-		if (btnCreate != null)
-			btnCreate.setEnabled(!isEditing);
-		if (btnDelete != null)
-			btnDelete.setEnabled(!isEditing);
-		if (btnRead != null)
-			btnRead.setEnabled(!isEditing);
-		if (btnUpdate != null)
-			btnUpdate.setEnabled(!isEditing);
+    public void setEditMode(boolean mode) {
+        if (mode == isEditing)
+            return;
+        isEditing = mode;
+        if (btnGet != null)
+            btnGet.setEnabled(!isEditing);
+        if (btnCreate != null)
+            btnCreate.setEnabled(!isEditing);
+        if (btnDelete != null)
+            btnDelete.setEnabled(!isEditing);
+        if (btnRead != null)
+            btnRead.setEnabled(!isEditing);
+        if (btnUpdate != null)
+            btnUpdate.setEnabled(!isEditing);
 
-		if (itemGet != null)
-			itemGet.setEnabled(!isEditing);
-		if (itemCreate != null)
-			itemCreate.setEnabled(!isEditing);
-		if (itemDelete != null)
-			itemDelete.setEnabled(!isEditing);
-		if (itemRead != null)
-			itemRead.setEnabled(!isEditing);
-		if (itemUpdate != null)
-			itemUpdate.setEnabled(!isEditing);
+        if (itemGet != null)
+            itemGet.setEnabled(!isEditing);
+        if (itemCreate != null)
+            itemCreate.setEnabled(!isEditing);
+        if (itemDelete != null)
+            itemDelete.setEnabled(!isEditing);
+        if (itemRead != null)
+            itemRead.setEnabled(!isEditing);
+        if (itemUpdate != null)
+            itemUpdate.setEnabled(!isEditing);
         if (itemUpload != null)
             itemUpload.setEnabled(!isEditing);
         if (itemDownload != null)
             itemDownload.setEnabled(!isEditing);
 
-	}
+    }
 
-	public void setFileDisplayMode(boolean mode) {
-		if (mode == isFileContentsDisplayed)
-			return;
-		isFileContentsDisplayed = mode;
-		if (btnUpdate != null)
-			btnUpdate.setEnabled(isFileContentsDisplayed);
+    public void setFileDisplayMode(boolean mode) {
+        if (mode == isFileContentsDisplayed)
+            return;
+        isFileContentsDisplayed = mode;
+        if (btnUpdate != null)
+            btnUpdate.setEnabled(isFileContentsDisplayed);
 
-		if (itemUpdate != null)
-			itemUpdate.setEnabled(isFileContentsDisplayed);
+        if (itemUpdate != null)
+            itemUpdate.setEnabled(isFileContentsDisplayed);
 
-	}
+    }
 
-	public void setListSelectedMode(boolean mode) {
-		if (mode == isListItemSelected)
-			return;
-		isListItemSelected = mode;
-		if (btnDelete != null)
-			btnDelete.setEnabled(isListItemSelected);
-		if (btnRead != null)
-			btnRead.setEnabled(isListItemSelected);
+    public void setListSelectedMode(boolean mode) {
+        if (mode == isListItemSelected)
+            return;
+        isListItemSelected = mode;
+        if (btnDelete != null)
+            btnDelete.setEnabled(isListItemSelected);
+        if (btnRead != null)
+            btnRead.setEnabled(isListItemSelected);
 
-		if (itemDelete != null)
-			itemDelete.setEnabled(isListItemSelected);
-		if (itemRead != null)
-			itemRead.setEnabled(isListItemSelected);
+        if (itemDelete != null)
+            itemDelete.setEnabled(isListItemSelected);
+        if (itemRead != null)
+            itemRead.setEnabled(isListItemSelected);
 
-	}
+    }
 }
 // *********************************************************
 //

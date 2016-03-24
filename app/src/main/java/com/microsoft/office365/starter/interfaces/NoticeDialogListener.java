@@ -9,16 +9,17 @@ package com.microsoft.office365.starter.interfaces;
  * event detail fragments whose contents include Ok and Cancel buttons.
  */
 
-import com.microsoft.office365.starter.Calendar.O365CalendarModel.O365Calendar_Event;
 import android.app.Fragment;
 
+import com.microsoft.office365.starter.Calendar.O365CalendarModel.O365Calendar_Event;
+
 public interface NoticeDialogListener extends BaseDialogListener {
-	public void onDialogPositiveClick(Fragment dialog);
+    public void onDialogPositiveClick(Fragment dialog);
 
-	public void onDialogPositiveClick(Fragment dialog,
-			O365Calendar_Event newItem, boolean newItemFlag);
+    public void onDialogPositiveClick(Fragment dialog,
+                                      O365Calendar_Event newItem, boolean newItemFlag);
 
-	public void onDialogNegativeClick(Fragment dialog);
+    public void onDialogNegativeClick(Fragment dialog);
 }
 // *********************************************************
 //

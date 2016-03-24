@@ -1,5 +1,11 @@
 apply plugin: 'com.android.application'
 
+repositories {
+    maven {
+        url  "http://dl.bintray.com/msopentech/Maven"
+    }
+}
+
 android {
     compileSdkVersion 21
     buildToolsVersion "22.0.1"
@@ -25,15 +31,11 @@ android {
 
 
 dependencies {
-    // base OData library:
-    compile group: 'com.microsoft.services', name: 'odata-engine-core', version: '0.13.0'
-    compile group: 'com.microsoft.services', name: 'odata-engine-android-impl', version: '0.13.0', ext:'aar'
-
-    // choose the outlook, discovery, and file services
-    compile group: 'com.microsoft.services', name: 'outlook-services', version: '0.13.0'
-    compile group: 'com.microsoft.services', name: 'discovery-services', version: '0.13.0'
-    compile group: 'com.microsoft.services', name: 'file-services', version: '0.13.0'
+    compile 'com.microsoft.services:outlook-services:1.0.0'
+    compile 'com.microsoft.services:discovery-services:1.0.0'
+    compile 'com.microsoft.services:file-services:1.0.0'
+    compile 'com.microsoft.services.orc:orc-android:1.0.0'
 
     // Azure Active Directory Library
-    compile group: 'com.microsoft.aad', name: 'adal', version: '1.1.2'
+    //compile group: 'com.microsoft.aad', name: 'adal', version: '1.1.16'
 }

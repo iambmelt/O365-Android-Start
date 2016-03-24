@@ -4,12 +4,9 @@
 
 package com.microsoft.office365.starter.Calendar;
 
-import java.util.Calendar;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import android.os.Bundle;
 import android.app.Activity;
 import android.app.Fragment;
+import android.os.Bundle;
 import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -20,12 +17,16 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.TextView;
+
 import com.microsoft.office365.starter.R;
 import com.microsoft.office365.starter.interfaces.NoticeDialogListener;
 
+import java.util.Calendar;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 public class CalendarEventFragmentView extends Fragment implements View.OnClickListener,
-        OnItemSelectedListener
-{
+        OnItemSelectedListener {
     private O365CalendarModel.O365Calendar_Event mEventModel;
     private O365CalendarModel mCalendarModel;
     private NoticeDialogListener mListener;
@@ -51,39 +52,34 @@ public class CalendarEventFragmentView extends Fragment implements View.OnClickL
         // If this activity is opened to edit an existing event, the item id is passed in the intent
         // bundle.
         // Otherwise, the activity is opened to create a new event and no arguments are passed
-        if (getArguments() != null && getArguments().containsKey(ARG_ITEM_ID))
-        {
+        if (getArguments() != null && getArguments().containsKey(ARG_ITEM_ID)) {
             String itemId = getArguments()
                     .getString(ARG_ITEM_ID);
-            if (itemId != null)
-            {
+            if (itemId != null) {
                 mEventModel = mCalendarModel
                         .getCalendar()
                         .ITEM_MAP
-                                .get(itemId);
+                        .get(itemId);
 
                 // Set event create mode flag to false.
                 mCreateMode = false;
             }
-        }
-        else
+        } else
             mEventModel = mCalendarModel.createEvent("New event");
 
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         rootView = inflater.inflate(
                 R.layout.fragment_calendarevent_detail_create, container, false);
 
-        if (mCreateMode == false)
-        {
+        if (mCreateMode == false) {
             TextView titleView = (TextView) rootView.findViewById(R.id.CalendarDetailFragmentTitle);
             titleView.setText(R.string.Calendar_UpdateEventDetails);
             loadEventDetails();
-        }
-        else
+        } else
             //loadSpinners fills the start and end date & time spinners with
             //default start and end dates
             loadSpinners();
@@ -98,8 +94,7 @@ public class CalendarEventFragmentView extends Fragment implements View.OnClickL
                     mListener.onDialogPositiveClick(CalendarEventFragmentView.this,
                             mEventModel, false);
 
-                else
-                {
+                else {
                     addItem(mEventModel);
                     mListener.onDialogPositiveClick(CalendarEventFragmentView.this,
                             mEventModel, true);
@@ -108,8 +103,7 @@ public class CalendarEventFragmentView extends Fragment implements View.OnClickL
         });
         rootView.findViewById(R.id.actionbar_cancel).setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View v)
-            {
+            public void onClick(View v) {
                 mListener.onDialogNegativeClick(CalendarEventFragmentView.this);
             }
         });
@@ -117,8 +111,7 @@ public class CalendarEventFragmentView extends Fragment implements View.OnClickL
     }
 
     @Override
-    public void onDetach()
-    {
+    public void onDetach() {
         super.onDetach();
         Activity parent = getActivity();
 
@@ -126,8 +119,7 @@ public class CalendarEventFragmentView extends Fragment implements View.OnClickL
         // have been disabled. The buttons must be enabled again.
         // If the parent activity is the small screen activity, then there are no action
         // buttons to enable.
-        if (parent.getClass().getName().equals("CalendarEventListActivity"))
-        {
+        if (parent.getClass().getName().equals("CalendarEventListActivity")) {
             CalendarEventListActivity parentList = (CalendarEventListActivity) getActivity();
             if (parentList != null)
                 parentList.helperEnableActionButtons();
@@ -135,14 +127,11 @@ public class CalendarEventFragmentView extends Fragment implements View.OnClickL
     }
 
     @Override
-    public void onAttach(Activity activity)
-    {
+    public void onAttach(Activity activity) {
         super.onAttach(activity);
-        try
-        {
+        try {
             mListener = (NoticeDialogListener) activity;
-        } catch (ClassCastException e)
-        {
+        } catch (ClassCastException e) {
             throw new ClassCastException(activity.toString()
                     + " must implement NoticeDialogListener");
         }
@@ -160,10 +149,8 @@ public class CalendarEventFragmentView extends Fragment implements View.OnClickL
                         , item);
     }
 
-    private void loadEventDetails()
-    {
-        if (mCreateMode == true)
-        {
+    private void loadEventDetails() {
+        if (mCreateMode == true) {
             ((EditText) rootView.findViewById(R.id.locationText))
                     .setText("My location");
 
@@ -172,9 +159,7 @@ public class CalendarEventFragmentView extends Fragment implements View.OnClickL
 
             ((EditText) rootView.findViewById(R.id.attendeesText))
                     .setText("");
-        }
-        else
-        {
+        } else {
             ((EditText) rootView.findViewById(R.id.locationText))
                     .setText(mEventModel.getLocation());
 
@@ -189,8 +174,7 @@ public class CalendarEventFragmentView extends Fragment implements View.OnClickL
         }
     }
 
-    private void loadSpinners()
-    {
+    private void loadSpinners() {
 
         ArrayAdapter<CharSequence> monthAdapter = ArrayAdapter.createFromResource(
                 getActivity()
@@ -264,8 +248,7 @@ public class CalendarEventFragmentView extends Fragment implements View.OnClickL
         endHourSpinner.setAdapter(hourAdapter);
 
         // If in EDIT mode, fill the date/time spinner values from the existing calendar event
-        if (!mCreateMode)
-        {
+        if (!mCreateMode) {
             Calendar startCalendar = mEventModel.getStartDateTime();
 
             String aString = Integer.toString(startCalendar.get(Calendar.YEAR));
@@ -273,22 +256,20 @@ public class CalendarEventFragmentView extends Fragment implements View.OnClickL
             startYearSpinner.setSelection(position);
 
             startMonthSpinner.setSelection(startCalendar.get(Calendar.MONTH));
-            startDaySpinner.setSelection(startCalendar.get(Calendar.DAY_OF_MONTH)-1);
+            startDaySpinner.setSelection(startCalendar.get(Calendar.DAY_OF_MONTH) - 1);
             Calendar endCalendar = mEventModel.getEndDateTime();
             aString = Integer.toString(endCalendar.get(Calendar.YEAR));
             position = yearAdapter.getPosition(aString);
             endYearSpinner.setSelection(position);
             endMonthSpinner.setSelection(endCalendar.get(Calendar.MONTH));
-            endDaySpinner.setSelection(endCalendar.get(Calendar.DAY_OF_MONTH)-1);
+            endDaySpinner.setSelection(endCalendar.get(Calendar.DAY_OF_MONTH) - 1);
 
 
             int startHour = startCalendar.get(Calendar.HOUR_OF_DAY);
-            if (startHour > 12)
-            {
+            if (startHour > 12) {
                 startHour -= 12;
                 startMeridanSpinner.setSelection(1);
-            }
-            else
+            } else
                 startMeridanSpinner.setSelection(0);
 
 
@@ -301,12 +282,10 @@ public class CalendarEventFragmentView extends Fragment implements View.OnClickL
             startMinuteSpinner.setSelection(position);
 
             int endHour = endCalendar.get(Calendar.HOUR_OF_DAY);
-            if (endHour > 12)
-            {
+            if (endHour > 12) {
                 endHour -= 12;
                 endMeridianSpinner.setSelection(1);
-            }
-            else
+            } else
                 endMeridianSpinner.setSelection(0);
 
             aString = Integer.toString(endHour);
@@ -320,8 +299,7 @@ public class CalendarEventFragmentView extends Fragment implements View.OnClickL
     }
 
     // Saves the user's choices in the event model before posting new event to Outlook service
-    private void saveEventDetails()
-    {
+    private void saveEventDetails() {
         Pattern pattern;
         Matcher matcher;
 
@@ -345,8 +323,7 @@ public class CalendarEventFragmentView extends Fragment implements View.OnClickL
         String[] attendeeArray = attendee.toString().split(";");
         // Iterate on attendee array
         StringBuilder sBuilder = new StringBuilder();
-        for (String attendeeString : attendeeArray)
-        {
+        for (String attendeeString : attendeeArray) {
             // Validate the attendee string as an email
             matcher = pattern.matcher(attendeeString.trim());
             if (matcher.matches())
@@ -394,15 +371,13 @@ public class CalendarEventFragmentView extends Fragment implements View.OnClickL
     }
 
     @Override
-    public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3)
-    {
+    public void onItemSelected(AdapterView<?> arg0, View arg1, int arg2, long arg3) {
         // If in event edit mode, do not default event end date/time when start date/time is changed
         if (!mCreateMode)
             return;
 
         // Create mode, default end date/time values to chosen start date/time values
-        switch (arg0.getId())
-        {
+        switch (arg0.getId()) {
             case R.id.StartMonth_Spinner:
                 processSelectedStartMonth(arg2);
                 break;
@@ -432,11 +407,9 @@ public class CalendarEventFragmentView extends Fragment implements View.OnClickL
     }
 
     // Set the day of month adapter to appropriate ArrayAdaptor for chosen month
-    private void processSelectedStartMonth(int arg2)
-    {
+    private void processSelectedStartMonth(int arg2) {
         int resource = 0;
-        switch (arg2)
-        {
+        switch (arg2) {
             case 0: // Jan.
                 resource = R.array.DOM_31;
                 break;
@@ -489,11 +462,9 @@ public class CalendarEventFragmentView extends Fragment implements View.OnClickL
         endMonthSpinner.setSelection(arg2);
     }
 
-    private void processEndMonthSpinner(int arg2)
-    {
+    private void processEndMonthSpinner(int arg2) {
         int resource = 0;
-        switch (arg2)
-        {
+        switch (arg2) {
             case 0:
                 resource = R.array.DOM_31;
                 break;

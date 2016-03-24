@@ -14,11 +14,11 @@ import com.microsoft.office365.starter.O365APIsStart_Application;
 import com.microsoft.office365.starter.helpers.APIErrorMessageHelper;
 import com.microsoft.office365.starter.interfaces.OnMessagesAddedListener;
 import com.microsoft.office365.starter.interfaces.OnOperationCompleteListener;
-import com.microsoft.outlookservices.BodyType;
-import com.microsoft.outlookservices.EmailAddress;
-import com.microsoft.outlookservices.ItemBody;
-import com.microsoft.outlookservices.Message;
-import com.microsoft.outlookservices.Recipient;
+import com.microsoft.services.outlook.BodyType;
+import com.microsoft.services.outlook.EmailAddress;
+import com.microsoft.services.outlook.ItemBody;
+import com.microsoft.services.outlook.Message;
+import com.microsoft.services.outlook.Recipient;
 
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -29,9 +29,9 @@ import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class O365MailItemsModel
-{
+public class O365MailItemsModel {
 
+    private static final String LOG_TAG = "O365MailItemsModel";
     private MailMessages mMailMessages;
     private UUID tempNewMessageId;
     private O365APIsStart_Application mApplication;
@@ -39,10 +39,8 @@ public class O365MailItemsModel
     private OnOperationCompleteListener mMessageOperationCompleteListener;
 
 
-    public O365MailItemsModel(Activity activity)
-    {
-        if (activity == null)
-        {
+    public O365MailItemsModel(Activity activity) {
+        if (activity == null) {
             return;
         }
         mApplication = (O365APIsStart_Application) activity.getApplication();
@@ -50,22 +48,18 @@ public class O365MailItemsModel
 
 
     public void setMessageAddedListener(
-            OnMessagesAddedListener messagesAddedListener)
-    {
+            OnMessagesAddedListener messagesAddedListener) {
         this.mMessageAddedListener = messagesAddedListener;
     }
 
     public void setMessageOperationCompleteListener(
-            OnOperationCompleteListener messageOperationCompleteListener)
-    {
+            OnOperationCompleteListener messageOperationCompleteListener) {
         this.mMessageOperationCompleteListener = messageOperationCompleteListener;
     }
 
     // Returns an instance of the MailMessages class after constructing it if necessary
-    public MailMessages getMail()
-    {
-        if (mMailMessages == null)
-        {
+    public MailMessages getMail() {
+        if (mMailMessages == null) {
             mMailMessages = new MailMessages();
         }
         return mMailMessages;
@@ -73,15 +67,13 @@ public class O365MailItemsModel
 
     // This overload is called when Message objects are retrieved from the OutlookServices
     // endpoint.
-    public O365Mail_Message createMessage(String id, Message message)
-    {
+    public O365Mail_Message createMessage(String id, Message message) {
         // The message model caches an existing com.microsoft.office365.OutlookServices.Message
         return new O365Mail_Message(id, message);
     }
 
     // This overload is called when a user is creating a new message.
-    public O365Mail_Message createMessage(String subject)
-    {
+    public O365Mail_Message createMessage(String subject) {
         // Create a temporary unique message Id for the new message. The
         // temporary Id is used by the ListView to uniquely id the new message
         // when it is added to the local cache before posting to the Outlook service
@@ -100,8 +92,7 @@ public class O365MailItemsModel
         return newMessageModel;
     }
 
-    private boolean isEmailAddress(String emailAddress)
-    {
+    private boolean isEmailAddress(String emailAddress) {
         boolean returnValue = false;
         Pattern pattern;
         Matcher matcher;
@@ -112,18 +103,15 @@ public class O365MailItemsModel
         pattern = Pattern.compile(EMAIL_PATTERN);
         // Add mail to address if mailToString is an email address
         matcher = pattern.matcher(emailAddress);
-        if (matcher.matches())
-        {
+        if (matcher.matches()) {
             returnValue = true;
         }
         return returnValue;
     }
 
-    private Recipient MakeARecipient(String mailAddress)
-    {
+    private Recipient MakeARecipient(String mailAddress) {
         Recipient recipient = null;
-        if (isEmailAddress(mailAddress))
-        {
+        if (isEmailAddress(mailAddress)) {
             recipient = new Recipient();
             EmailAddress email = new EmailAddress();
             email.setName(mailAddress);
@@ -134,8 +122,7 @@ public class O365MailItemsModel
 
     }
 
-    public void postDeleteMailItem(final String messageToDeleteID)
-    {
+    public void postDeleteMailItem(final String messageToDeleteID) {
 
         ListenableFuture<Void> results = mApplication.getMailClient()
                 .getMe()
@@ -149,11 +136,9 @@ public class O365MailItemsModel
                 .delete();
 
         Futures.addCallback(
-                results, new FutureCallback<Void>()
-                {
+                results, new FutureCallback<Void>() {
                     @Override
-                    public void onSuccess(Void v)
-                    {
+                    public void onSuccess(Void v) {
                         //Remove the deleted mail from the local object model
                         //list and map
                         O365MailItemsModel
@@ -184,8 +169,7 @@ public class O365MailItemsModel
                     }
 
                     @Override
-                    public void onFailure(final Throwable t)
-                    {
+                    public void onFailure(final Throwable t) {
                         Log.e(
                                 "Failed to get messages: " + APIErrorMessageHelper.getErrorMessage(t.getMessage()),
                                 "O365MailItemsModel.postDeleteMailItem"
@@ -204,8 +188,7 @@ public class O365MailItemsModel
     }
 
 
-    public void postNewMailToServer(String mailTo, String mailCc, String mailSubject, String mailBody)
-    {
+    public void postNewMailToServer(String mailTo, String mailCc, String mailSubject, String mailBody) {
         //Set recipients
         List<Recipient> emailAddresses = new ArrayList<Recipient>();
         List<Recipient> ccEmailAddresses = new ArrayList<Recipient>();
@@ -214,10 +197,8 @@ public class O365MailItemsModel
         //email addresses, validate each email address,
         //and add valid email addresses to the List<Recipient> array.
         String[] mailToArray = mailTo.split(";");
-        for (String mailToString : mailToArray)
-        {
-            if (isEmailAddress(mailToString))
-            {
+        for (String mailToString : mailToArray) {
+            if (isEmailAddress(mailToString)) {
                 emailAddresses.add(MakeARecipient(mailToString));
             }
 
@@ -226,10 +207,8 @@ public class O365MailItemsModel
         //email addresses, validate each email address,
         //and add valid email addresses to the List<Recipient> array.
         String[] mailCcArray = mailCc.split(";");
-        for (String mailCcString : mailCcArray)
-        {
-            if (isEmailAddress(mailCcString))
-            {
+        for (String mailCcString : mailCcArray) {
+            if (isEmailAddress(mailCcString)) {
                 ccEmailAddresses.add(MakeARecipient(mailCcString));
             }
 
@@ -237,13 +216,11 @@ public class O365MailItemsModel
 
         //If at least one of the mail to strings is a valid email address
         // send the email message with all valid email addresses
-        if (!emailAddresses.isEmpty())
-        {
+        if (!emailAddresses.isEmpty()) {
             Message messageToSend = new Message();
             messageToSend.setToRecipients(emailAddresses);
 
-            if (!ccEmailAddresses.isEmpty())
-            {
+            if (!ccEmailAddresses.isEmpty()) {
                 messageToSend.setCcRecipients(ccEmailAddresses);
             }
 
@@ -259,11 +236,9 @@ public class O365MailItemsModel
                     .sendMail(messageToSend, true);
 
             Futures.addCallback(
-                    results, new FutureCallback<Integer>()
-                    {
+                    results, new FutureCallback<Integer>() {
                         @Override
-                        public void onSuccess(Integer result)
-                        {
+                        public void onSuccess(Integer result) {
                             OnOperationCompleteListener.OperationResult eventData = new OnOperationCompleteListener.OperationResult(
                                     "Send Mail"
                                     , "New Mail message sent successfully."
@@ -274,14 +249,8 @@ public class O365MailItemsModel
                         }
 
                         @Override
-                        public void onFailure(Throwable t)
-                        {
-                            Log.e(
-                                    "Failed to get messages: " + APIErrorMessageHelper.getErrorMessage(
-                                            t.getMessage()
-                                    ),
-                                    "O365MailItemsModel.postNewMailToServer"
-                            );
+                        public void onFailure(Throwable t) {
+                            Log.e(LOG_TAG, APIErrorMessageHelper.getErrorMessage(t.getMessage()));
                             OnOperationCompleteListener.OperationResult eventData = new OnOperationCompleteListener.OperationResult(
                                     "Send Mail"
                                     ,
@@ -298,8 +267,7 @@ public class O365MailItemsModel
         }
         //If no mail to strings are valid email addresses, invoke the operation complete method with
         //the fail state
-        else
-        {
+        else {
             OnOperationCompleteListener.OperationResult eventData = new OnOperationCompleteListener.OperationResult(
                     "Send Mail"
                     , "An error occurred because one or more emails were not formatted correctly."
@@ -313,15 +281,12 @@ public class O365MailItemsModel
 
     //Get a set of email messages, starting with the message at skipTomessageNumber
     //Size of message set is set by pageSize
-    public void getMessageList(int pageSize, int skipToMessageNumber)
-    {
-        if (mMailMessages == null)
-        {
+    public void getMessageList(int pageSize, int skipToMessageNumber) {
+        if (mMailMessages == null) {
             mMailMessages = new MailMessages();
         }
 
-        try
-        {
+        try {
             // retrieve a page of email messages asynchronously
             ListenableFuture<List<Message>> results = mApplication.getMailClient()
                     .getMe()
@@ -332,12 +297,10 @@ public class O365MailItemsModel
                     .read();
 
             Futures.addCallback(
-                    results, new FutureCallback<List<Message>>()
-                    {
+                    results, new FutureCallback<List<Message>>() {
 
                         @Override
-                        public void onSuccess(final List<Message> result)
-                        {
+                        public void onSuccess(final List<Message> result) {
                             loadMessagesIntoModel(result);
                             OnMessagesAddedListener.MessageCollection MessageItemData = new OnMessagesAddedListener
                                     .MessageCollection(mMailMessages.ITEMS);
@@ -346,13 +309,12 @@ public class O365MailItemsModel
                         }
 
                         @Override
-                        public void onFailure(final Throwable t)
-                        {
+                        public void onFailure(final Throwable t) {
                             Log.e(
-                                    "Failed to get messages: " + APIErrorMessageHelper.getErrorMessage(
+                                    LOG_TAG,
+                                    APIErrorMessageHelper.getErrorMessage(
                                             t.getMessage()
-                                    ),
-                                    "O365MailItemsModel.getMessageList"
+                                    )
                             );
                             OnMessagesAddedListener.MessageCollection eventData = new OnMessagesAddedListener
                                     .MessageCollection(mMailMessages.ITEMS);
@@ -360,43 +322,34 @@ public class O365MailItemsModel
                         }
                     }
             );
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             String exceptionMessage = ex.getMessage();
             Log.e("RetrieveMessagesTask", exceptionMessage);
         }
     }
 
 
-    private void loadMessagesIntoModel(List<Message> message)
-    {
-        try
-        {
+    private void loadMessagesIntoModel(List<Message> message) {
+        try {
             this.getMail().ITEMS.clear();
             this.getMail().ITEM_MAP.clear();
-            for (Message m : message)
-            {
+            for (Message m : message) {
                 O365Mail_Message mailMessage = this.createMessage(m.getId(), m);
                 ItemBody itemBody = m.getBody();
-                if (itemBody != null)
-                {
+                if (itemBody != null) {
                     mailMessage.setItemBody(m.getBody());
                 }
 
                 mailMessage.setSubject(m.getSubject());
                 addItem(mailMessage);
             }
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             String exceptionMessage = ex.getMessage();
             Log.e("RetrievemessagesTask", exceptionMessage);
         }
     }
 
-    private void addItem(O365Mail_Message item)
-    {
+    private void addItem(O365Mail_Message item) {
         this.getMail()
                 .ITEMS
                 .add(item);
@@ -408,8 +361,7 @@ public class O365MailItemsModel
     /**
      * Helper class for providing content for user interfaces created by Android template wizards.
      */
-    public class MailMessages
-    {
+    public class MailMessages {
         public List<O365Mail_Message> ITEMS = new ArrayList<O365Mail_Message>();
         public Map<String, O365Mail_Message> ITEM_MAP = new HashMap<String, O365Mail_Message>();
     }
@@ -417,8 +369,7 @@ public class O365MailItemsModel
     /**
      * A single mail message. The class exposes message properties as simple strings
      */
-    public class O365Mail_Message
-    {
+    public class O365Mail_Message {
         private String id;
         private String subject = " ";
         private String recipients = "";
@@ -430,79 +381,61 @@ public class O365MailItemsModel
         // Sets the subject property of a message and
         // sets the message item body (content) with the
         // same subject string
-        public void setSubject(String Subject)
-        {
+        public void setSubject(String Subject) {
             subject = Subject;
-            if (this.itemBody != null)
-            {
+            if (this.itemBody != null) {
                 this.itemBody.setContent(Subject);
                 this.itemBody.setContentType(BodyType.Text);
                 thisMessage.setSubject(Subject);
             }
         }
 
-        public void setMessage(Message message)
-        {
+        public void setMessage(Message message) {
             thisMessage = message;
             this.id = message.getId();
         }
 
         // Updates the subject of the message
-        public void updateSubject(String Subject)
-        {
+        public void updateSubject(String Subject) {
             subject = Subject;
-            if (thisMessage != null)
-            {
+            if (thisMessage != null) {
                 thisMessage.setSubject(Subject);
             }
         }
 
         // Returns a comma delimited list of recipient
         // email addresses
-        public String getMessageRecipients()
-        {
-            try
-            {
+        public String getMessageRecipients() {
+            try {
                 // Get any previously invited attendees
-                if (thisMessage.getToRecipients() != null)
-                {
+                if (thisMessage.getToRecipients() != null) {
                     recipients = makeRecipientsList(thisMessage.getToRecipients());
                 }
-            }
-            catch (Exception ex)
-            {
-                Log.e("Exception on get recipients: " + ex.getMessage(), "");
+            } catch (Exception ex) {
+                Log.e(getClass().getSimpleName(), ex.getMessage());
             }
             return recipients;
         }
 
-        public String getCCMessageRecipients()
-        {
-            try
-            {
+        public String getCCMessageRecipients() {
+            try {
                 // Get any CC recipients
-                if (thisMessage.getCcRecipients() != null)
-                {
+                if (thisMessage.getCcRecipients() != null) {
                     ccRecipients = makeRecipientsList(thisMessage.getCcRecipients());
                 }
-            }
-            catch (Exception ex)
-            {
-                Log.e("Exception on get CC recipients: " + ex.getMessage(), "");
+            } catch (Exception ex) {
+                Log.e(getClass().getSimpleName(), ex.getMessage());
             }
             return ccRecipients;
         }
 
-        private String makeRecipientsList(List<Recipient> recipients)
-        {
+        private String makeRecipientsList(List<Recipient> recipients) {
             String recipientString = "";
-            for (Recipient r : recipients)
-            {
+            for (Recipient r : recipients) {
                 String charSeparator = "";
                 String recipientName = r.getEmailAddress().getAddress();
 
-                if (recipients.size() > 1)
-                {
+                if (recipients.size() > 1) {
                     charSeparator = ";";
                 }
 
@@ -511,8 +444,7 @@ public class O365MailItemsModel
 
             // Trim off trailing space and the comma that trails the recipient list
             recipientString = recipientString.trim();
-            if (recipientString.endsWith(";"))
-            {
+            if (recipientString.endsWith(";")) {
                 recipientString = recipientString.substring(0, recipientString.length() - 1);
             }
 
@@ -521,8 +453,7 @@ public class O365MailItemsModel
 
 
         // Returns the email address of the sender
-        public String getFrom()
-        {
+        public String getFrom() {
             return thisMessage
                     .getFrom()
                     .getEmailAddress()
@@ -530,53 +461,41 @@ public class O365MailItemsModel
         }
 
         // Returns the subject of the message
-        public String getSubject()
-        {
+        public String getSubject() {
             String returnValue = "";
-            if (thisMessage == null)
-            {
+            if (thisMessage == null) {
                 returnValue = subject;
-            }
-
-            else if (thisMessage.getSubject() != null)
-            {
+            } else if (thisMessage.getSubject() != null) {
                 returnValue = thisMessage.getSubject();
             }
 
             return returnValue;
         }
 
-        public String getID()
-        {
+        public String getID() {
             return this.id;
         }
 
-        public void setID(String newId)
-        {
+        public void setID(String newId) {
             id = newId;
         }
 
-        public void setItemBody(ItemBody body)
-        {
+        public void setItemBody(ItemBody body) {
             this.itemBody = body;
             this.itemBodyString = body.getContent();
         }
 
-        public String getItemBody()
-        {
+        public String getItemBody() {
             return itemBodyString;
         }
 
-        public Message getMessage()
-        {
+        public Message getMessage() {
             return thisMessage;
         }
 
         // Add new recipients to the existing list of message recipients
-        public void setMessageRecipients(String recipients)
-        {
-            if (thisMessage.getToRecipients() != null)
-            {
+        public void setMessageRecipients(String recipients) {
+            if (thisMessage.getToRecipients() != null) {
                 thisMessage.getToRecipients().clear();
             }
 
@@ -590,19 +509,16 @@ public class O365MailItemsModel
             pattern = Pattern.compile(EMAIL_PATTERN);
 
             String[] recipientArray = recipients.split(";");
-            for (String recipientString : recipientArray)
-            {
+            for (String recipientString : recipientArray) {
                 // Add recipient if recipientString is an email address
                 matcher = pattern.matcher(recipientString);
-                if (matcher.matches())
-                {
+                if (matcher.matches()) {
                     makeARecipient(recipientString.trim());
                 }
             }
         }
 
-        private void makeARecipient(String aRecipient)
-        {
+        private void makeARecipient(String aRecipient) {
             this.recipients = aRecipient;
             Recipient recipient = new Recipient();
             EmailAddress email = new EmailAddress();
@@ -612,8 +528,7 @@ public class O365MailItemsModel
             // Get the current list of message recipients and add the new recipient
             // to the list
             List<Recipient> listRecipients = thisMessage.getToRecipients();
-            if (listRecipients == null)
-            {
+            if (listRecipients == null) {
                 listRecipients = new ArrayList<Recipient>();
             }
             listRecipients.add(recipient);
@@ -621,15 +536,13 @@ public class O365MailItemsModel
         }
 
 
-        public O365Mail_Message(String id, Message message)
-        {
+        public O365Mail_Message(String id, Message message) {
             this.id = id;
             thisMessage = message;
 
         }
 
-        public O365Mail_Message(String id)
-        {
+        public O365Mail_Message(String id) {
             this.id = id;
             thisMessage = new Message();
             thisMessage.setId(this.id);
@@ -638,8 +551,7 @@ public class O365MailItemsModel
         // the toString override is called by the two-pane list box to show
         // Email message details in the list.
         @Override
-        public String toString()
-        {
+        public String toString() {
 
             Calendar sentDateCalendar = thisMessage.getDateTimeSent();
             String sentDate = sentDateCalendar.get(Calendar.MONTH) + 1

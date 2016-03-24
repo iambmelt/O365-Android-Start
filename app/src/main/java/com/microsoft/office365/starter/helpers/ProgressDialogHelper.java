@@ -9,17 +9,17 @@ import android.app.ProgressDialog;
 
 public class ProgressDialogHelper {
 
-	// show dialog using the given parameters
-	static public ProgressDialog showProgressDialog(Activity activity,
-			String title, String message) {
-		ProgressDialog dialog = new ProgressDialog(activity);
-		dialog.setTitle(title);
-		dialog.setMessage(message);
-		dialog.setCancelable(true);
-		dialog.setIndeterminate(true);
-		dialog.show();
-		return dialog;
-	}
+    // show dialog using the given parameters
+    static public ProgressDialog showProgressDialog(Activity activity,
+                                                    String title, String message) {
+        ProgressDialog dialog = new ProgressDialog(activity);
+        dialog.setTitle(title);
+        dialog.setMessage(message);
+        dialog.setCancelable(true);
+        dialog.setIndeterminate(true);
+        dialog.show();
+        return dialog;
+    }
 
 }
 // *********************************************************

@@ -7,13 +7,11 @@ package com.microsoft.office365.starter.helpers;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class APIErrorMessageHelper
-{
+public class APIErrorMessageHelper {
     // Takes the string returned from Outlook service in the
     // onFailure event, parses for the JSON object, and gets
     // the actual error message
-    public static String getErrorMessage(String result)
-    {
+    public static String getErrorMessage(String result) {
         String errorMessage = "";
         try {
 
@@ -25,14 +23,10 @@ public class APIErrorMessageHelper
             JSONObject error = (JSONObject) jObject.get("error");
             errorMessage = error.getString("message");
 
-        }
-        catch (JSONException e)
-        {
+        } catch (JSONException e) {
             e.printStackTrace();
             errorMessage = e.getMessage();
-        }
-        catch (Exception ex)
-        {
+        } catch (Exception ex) {
             ex.printStackTrace();
             errorMessage = ex.getMessage();
         }

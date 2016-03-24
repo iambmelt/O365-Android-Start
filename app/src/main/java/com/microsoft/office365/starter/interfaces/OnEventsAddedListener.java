@@ -4,30 +4,30 @@
 
 package com.microsoft.office365.starter.interfaces;
 
-import java.util.List;
-
 import com.microsoft.office365.starter.Calendar.O365CalendarModel;
+
+import java.util.List;
 
 /**
  * Defines a callback method and event data class to be used by a class that
  * gets a notification when an O365.Event is added.
  */
 public interface OnEventsAddedListener {
-	class setEventCollection {
-		List<O365CalendarModel.O365Calendar_Event> mEventCollection;
+    class setEventCollection {
+        List<O365CalendarModel.O365Calendar_Event> mEventCollection;
 
-		public List<O365CalendarModel.O365Calendar_Event> getEventCollection() {
-			return mEventCollection;
-		}
+        public List<O365CalendarModel.O365Calendar_Event> getEventCollection() {
+            return mEventCollection;
+        }
 
-		public setEventCollection(
-				List<O365CalendarModel.O365Calendar_Event> eventCollection) {
-			mEventCollection = eventCollection;
-		}
+        public setEventCollection(
+                List<O365CalendarModel.O365Calendar_Event> eventCollection) {
+            mEventCollection = eventCollection;
+        }
 
-	}
+    }
 
-	public void OnEventsAdded(setEventCollection eventCollection);
+    public void OnEventsAdded(setEventCollection eventCollection);
 
 }
 // *********************************************************

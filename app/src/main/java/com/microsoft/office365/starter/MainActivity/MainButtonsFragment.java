@@ -24,93 +24,93 @@ import com.microsoft.office365.starter.interfaces.MainActivityCoordinator;
 
 public class MainButtonsFragment extends Fragment implements OnClickListener {
 
-	private ImageButton mCalendarButton;
-	private ImageButton mFilesButton;
+    private ImageButton mCalendarButton;
+    private ImageButton mFilesButton;
     private ImageButton mMailButton;
-	private O365APIsStart_Application mApplication;
+    private O365APIsStart_Application mApplication;
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-		mApplication = (O365APIsStart_Application) getActivity()
-				.getApplication();
-	}
+        mApplication = (O365APIsStart_Application) getActivity()
+                .getApplication();
+    }
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		View fragmentView = inflater.inflate(R.layout.fragment_main_buttons,
-				container, false);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View fragmentView = inflater.inflate(R.layout.fragment_main_buttons,
+                container, false);
 
-		// Create references to ImageButtons
-		mCalendarButton = (ImageButton) fragmentView
-				.findViewById(R.id.calendarButton);
-		mFilesButton = (ImageButton) fragmentView
-				.findViewById(R.id.filesButton);
+        // Create references to ImageButtons
+        mCalendarButton = (ImageButton) fragmentView
+                .findViewById(R.id.calendarButton);
+        mFilesButton = (ImageButton) fragmentView
+                .findViewById(R.id.filesButton);
         mMailButton = (ImageButton) fragmentView
                 .findViewById(R.id.mailButton);
-		mCalendarButton.setOnClickListener(this);
-		mFilesButton.setOnClickListener(this);
+        mCalendarButton.setOnClickListener(this);
+        mFilesButton.setOnClickListener(this);
         mMailButton.setOnClickListener(this);
 
-		// Inflate the layout for this fragment
-		return fragmentView;
-	}
+        // Inflate the layout for this fragment
+        return fragmentView;
+    }
 
-	public void setButtonsEnabled(boolean enabled) {
-		setImageButtonEnabled(getActivity(), enabled, mCalendarButton,
-				R.drawable.calendar_icon_main);
-		setImageButtonEnabled(getActivity(), enabled, mFilesButton,
-				R.drawable.myfiles_icon_main);
+    public void setButtonsEnabled(boolean enabled) {
+        setImageButtonEnabled(getActivity(), enabled, mCalendarButton,
+                R.drawable.calendar_icon_main);
+        setImageButtonEnabled(getActivity(), enabled, mFilesButton,
+                R.drawable.myfiles_icon_main);
         setImageButtonEnabled(getActivity(), enabled, mMailButton,
                 R.drawable.mail_icon_main);
-	}
+    }
 
-	private static void setImageButtonEnabled(Context context, boolean enabled,
-			ImageButton item, int iconResId) {
-		item.setEnabled(enabled);
-		item.setClickable(enabled);
-		Drawable originalIcon = context.getResources().getDrawable(iconResId);
-		int overlay = context.getResources().getColor(R.color.DisabledItemBrush);
-		Drawable icon = enabled ? originalIcon : applyOverlayToDrawable(
-				originalIcon, overlay);
-		item.setImageDrawable(icon);
-	}
+    private static void setImageButtonEnabled(Context context, boolean enabled,
+                                              ImageButton item, int iconResId) {
+        item.setEnabled(enabled);
+        item.setClickable(enabled);
+        Drawable originalIcon = context.getResources().getDrawable(iconResId);
+        int overlay = context.getResources().getColor(R.color.DisabledItemBrush);
+        Drawable icon = enabled ? originalIcon : applyOverlayToDrawable(
+                originalIcon, overlay);
+        item.setImageDrawable(icon);
+    }
 
-	private static Drawable applyOverlayToDrawable(Drawable drawable,
-			int overlay) {
-		if (drawable == null) {
-			return null;
-		}
-		Drawable res = drawable.mutate();
-		res.setColorFilter(overlay, Mode.SRC_IN);
-		return res;
-	}
+    private static Drawable applyOverlayToDrawable(Drawable drawable,
+                                                   int overlay) {
+        if (drawable == null) {
+            return null;
+        }
+        Drawable res = drawable.mutate();
+        res.setColorFilter(overlay, Mode.SRC_IN);
+        return res;
+    }
 
-	@Override
-	public void onClick(View v) {
-		String capability = "";
-		switch (v.getId()) {
-		case R.id.filesButton:
-			capability = Constants.MYFILES_CAPABILITY;
-			break;
-		case R.id.calendarButton:
-			capability = Constants.CALENDAR_CAPABILITY;
-			if (mApplication.getCalendarModel() != null) {
-				mApplication.getCalendarModel().getCalendar().ITEMS.clear();
-				mApplication.getCalendarModel().getCalendar().ITEM_MAP.clear();
-			}
-			break;
-        case R.id.mailButton:
-            capability = Constants.MAIL_CAPABILITY;
-            break;
-		}
+    @Override
+    public void onClick(View v) {
+        String capability = "";
+        switch (v.getId()) {
+            case R.id.filesButton:
+                capability = Constants.MYFILES_CAPABILITY;
+                break;
+            case R.id.calendarButton:
+                capability = Constants.CALENDAR_CAPABILITY;
+                if (mApplication.getCalendarModel() != null) {
+                    mApplication.getCalendarModel().getCalendar().ITEMS.clear();
+                    mApplication.getCalendarModel().getCalendar().ITEM_MAP.clear();
+                }
+                break;
+            case R.id.mailButton:
+                capability = Constants.MAIL_CAPABILITY;
+                break;
+        }
 
         Log.i("Office 365 Starter Project", "User selected the " + capability + " capability");
         MainActivityCoordinator mainActivity = (MainActivityCoordinator) getActivity();
         mainActivity.onServiceSelected(capability);
-	}
+    }
 }
 // *********************************************************
 //

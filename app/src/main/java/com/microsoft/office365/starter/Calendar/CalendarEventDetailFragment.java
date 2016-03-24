@@ -4,9 +4,8 @@
 
 package com.microsoft.office365.starter.Calendar;
 
-import java.util.Calendar;
-import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Bundle;
 import android.text.Editable;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,14 +16,15 @@ import android.widget.TimePicker;
 
 import com.microsoft.office365.starter.R;
 
+import java.util.Calendar;
+
 /**
  * A fragment representing a single CalendarEvent detail screen. This fragment is either contained
  * in a {@link CalendarEventListActivity} in two-pane mode (on tablets) or a
  * {@link com.microsoft.office365.starter.Calendar.CalendarEventDetailActivity} on handsets.
  */
 
-public class CalendarEventDetailFragment extends Fragment
-{
+public class CalendarEventDetailFragment extends Fragment {
 
     /**
      * The fragment argument representing the item ID that this fragment represents.
@@ -58,23 +58,23 @@ public class CalendarEventDetailFragment extends Fragment
                 mItem = ((CalendarEventDetailActivity) getActivity()).mCalendarModel
                         .getCalendar()
                         .ITEM_MAP
-                                .get(getArguments()
-                                        .getString(ARG_ITEM_ID));
+                        .get(getArguments()
+                                .getString(ARG_ITEM_ID));
 
             else
 
                 mItem = ((CalendarEventListActivity) getActivity()).mCalendarModel
                         .getCalendar()
                         .ITEM_MAP
-                                .get(getArguments()
-                                        .getString(ARG_ITEM_ID));
+                        .get(getArguments()
+                                .getString(ARG_ITEM_ID));
 
         }
     }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-            Bundle savedInstanceState) {
+                             Bundle savedInstanceState) {
         rootView = inflater.inflate(
                 R.layout.fragment_calendarevent_detail, container, false);
 
@@ -85,8 +85,7 @@ public class CalendarEventDetailFragment extends Fragment
         return rootView;
     }
 
-    private void loadEventDetails()
-    {
+    private void loadEventDetails() {
         ((EditText) rootView.findViewById(R.id.locationText))
                 .setText(mItem.getLocation());
 
@@ -138,8 +137,7 @@ public class CalendarEventDetailFragment extends Fragment
 
     }
 
-    public void updateItem()
-    {
+    public void updateItem() {
         Editable subject = ((EditText) rootView.findViewById(R.id.subjectText))
                 .getText();
         mItem.updateSubject(subject.toString());

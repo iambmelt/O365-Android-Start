@@ -7,24 +7,32 @@ package com.microsoft.office365.starter.Calendar;
 import android.app.Activity;
 import android.os.Parcel;
 import android.util.Log;
+
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
-import com.microsoft.office365.starter.helpers.APIErrorMessageHelper;
-import com.microsoft.outlookservices.Attendee;
-import com.microsoft.outlookservices.BodyType;
-import com.microsoft.outlookservices.EmailAddress;
-import com.microsoft.outlookservices.Event;
-import com.microsoft.outlookservices.ItemBody;
-import com.microsoft.outlookservices.Location;
 import com.microsoft.office365.starter.O365APIsStart_Application;
+import com.microsoft.office365.starter.helpers.APIErrorMessageHelper;
 import com.microsoft.office365.starter.helpers.Constants;
 import com.microsoft.office365.starter.interfaces.OnEventsAddedListener;
-import com.microsoft.office365.starter.interfaces.OnOperationCompleteListener;
 import com.microsoft.office365.starter.interfaces.OnEventsAddedListener.setEventCollection;
+import com.microsoft.office365.starter.interfaces.OnOperationCompleteListener;
 import com.microsoft.office365.starter.interfaces.OnOperationCompleteListener.OperationResult;
+import com.microsoft.services.outlook.Attendee;
+import com.microsoft.services.outlook.BodyType;
+import com.microsoft.services.outlook.EmailAddress;
+import com.microsoft.services.outlook.Event;
+import com.microsoft.services.outlook.ItemBody;
+import com.microsoft.services.outlook.Location;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TimeZone;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -38,7 +46,9 @@ import java.util.regex.Pattern;
  * com.microsoft.office365.OutlookServices.Event and exposes event properties as simple strings that
  * the UI fragments consume.
  */
-public class O365CalendarModel  {
+public class O365CalendarModel {
+
+    private static final String LOG_TAG = "O365CalendarModel";
 
     private CalendarEvents mCalendarEvents;
     private O365APIsStart_Application mApplication;
@@ -52,22 +62,19 @@ public class O365CalendarModel  {
     }
 
     public void setEventOperationCompleteListener(
-            OnOperationCompleteListener eventOperationCompleteListener)
-    {
+            OnOperationCompleteListener eventOperationCompleteListener) {
         this.mEventOperationCompleteListener = eventOperationCompleteListener;
     }
 
     // Returns an instance of the CalendarEvents class after constructing it if necessary
-    public CalendarEvents getCalendar()
-    {
+    public CalendarEvents getCalendar() {
         if (mCalendarEvents == null)
             mCalendarEvents = new CalendarEvents();
         return mCalendarEvents;
     }
 
     // This overload is called when a user is creating a new event.
-    public O365CalendarModel.O365Calendar_Event createEvent(String subject)
-    {
+    public O365CalendarModel.O365Calendar_Event createEvent(String subject) {
         // Create a temporary unique event Id for the new event. The
         // temporary Id is used by the ListView to uniquely id the new event
         // when it is added to the local cache before posting to the Outlook service
@@ -89,22 +96,19 @@ public class O365CalendarModel  {
 
     // This overload is called when Event objects are retrieved from the OutlookServices
     // endpoint.
-    public O365CalendarModel.O365Calendar_Event createEvent(String id, Event event)
-    {
+    public O365CalendarModel.O365Calendar_Event createEvent(String id, Event event) {
         // The event model caches an existing com.microsoft.office365.OutlookServices.Event
         return new O365CalendarModel.O365Calendar_Event(id, event);
     }
 
     // Posts changes made to an existing event.
     public void postUpdatedEvent(final Activity activity,
-            final O365CalendarModel.O365Calendar_Event eventToUpdate)
-    {
+                                 final O365CalendarModel.O365Calendar_Event eventToUpdate) {
         if (eventToUpdate == null)
             return;
 
         Event event = eventToUpdate.getEvent();
-        if (event.getEnd().before(event.getStart()))
-        {
+        if (event.getEnd().before(event.getStart())) {
             OperationResult opResult = new OperationResult(
                     "Update event"
                     , "Event was not updated. End cannot be before start."
@@ -123,8 +127,7 @@ public class O365CalendarModel  {
         Futures.addCallback(updatedEvent, new FutureCallback<Event>() {
 
             @Override
-            public void onSuccess(final Event result)
-            {
+            public void onSuccess(final Event result) {
                 // Notify caller that the Event update operation is complete and succeeded
                 OperationResult opResult = new OperationResult(
                         "Update event"
@@ -136,8 +139,7 @@ public class O365CalendarModel  {
             }
 
             @Override
-            public void onFailure(final Throwable t)
-            {
+            public void onFailure(final Throwable t) {
                 Log.e(t.getMessage(), "Update event");
                 // Notify caller that the operation failed
                 OperationResult opResult = new OperationResult(
@@ -155,10 +157,8 @@ public class O365CalendarModel  {
     // Posts an event deletion
     @SuppressWarnings("unchecked")
     public ListenableFuture<Event> postDeletedEvent(final Activity activity,
-            final O365CalendarModel.O365Calendar_Event eventToDelete)
-    {
-        if (eventToDelete == null)
-        {
+                                                    final O365CalendarModel.O365Calendar_Event eventToDelete) {
+        if (eventToDelete == null) {
             OperationResult opResult = new OperationResult(
                     "Remove event"
                     , "Select an event before clicking the Delete event button "
@@ -176,8 +176,7 @@ public class O365CalendarModel  {
         Futures.addCallback(deletedEvent, new FutureCallback<Event>() {
 
             @Override
-            public void onSuccess(final Event result)
-            {
+            public void onSuccess(final Event result) {
                 // Remove event from calendar events collection. This collection is
                 // the source of the ArrayAdapter attached to the event list in the UI
                 mCalendarEvents.ITEMS.remove(eventToDelete);
@@ -191,8 +190,7 @@ public class O365CalendarModel  {
             }
 
             @Override
-            public void onFailure(final Throwable t)
-            {
+            public void onFailure(final Throwable t) {
                 Log.e(t.getMessage(), "Delete event");
                 OperationResult opResult = new OperationResult(
                         "Remove event"
@@ -208,14 +206,11 @@ public class O365CalendarModel  {
 
     // Posts a new event
     public void postCreatedEvent(final Activity activity,
-            final O365CalendarModel.O365Calendar_Event eventToAdd)
-    {
-        try
-        {
+                                 final O365CalendarModel.O365Calendar_Event eventToAdd) {
+        try {
             Event newEvent = eventToAdd.getEvent();
 
-            if (newEvent.getEnd().before(newEvent.getStart()))
-            {
+            if (newEvent.getEnd().before(newEvent.getStart())) {
                 OperationResult opResult = new OperationResult(
                         "Add event"
                         , "Event was not added. End cannot be before start."
@@ -235,12 +230,10 @@ public class O365CalendarModel  {
                     .getEvents().add(newEvent);
 
             // addedEvent.
-            Futures.addCallback(addedEvent, new FutureCallback<Event>()
-            {
+            Futures.addCallback(addedEvent, new FutureCallback<Event>() {
 
                 @Override
-                public void onSuccess(final Event result)
-                {
+                public void onSuccess(final Event result) {
                     OperationResult opResult = new OperationResult(
                             "Add event"
                             , "Added event"
@@ -258,8 +251,7 @@ public class O365CalendarModel  {
                 }
 
                 @Override
-                public void onFailure(final Throwable t)
-                {
+                public void onFailure(final Throwable t) {
                     Log.e(t.getMessage(), "Create event");
                     OperationResult opResult = new OperationResult(
                             "Add event"
@@ -270,11 +262,8 @@ public class O365CalendarModel  {
                     mEventOperationCompleteListener.onOperationComplete(opResult);
                 }
             });
-        } catch (NullPointerException npe)
-        {
-            Log.e("Null pointer on add new event in O365CalendarModel.postCreatedEvent : "
-                    + npe.getMessage()
-                    , "null pointer");
+        } catch (NullPointerException npe) {
+            Log.e(LOG_TAG, npe.getMessage());
 
             OperationResult opResult = new OperationResult(
                     "Add event"
@@ -287,8 +276,7 @@ public class O365CalendarModel  {
 
     //Get a set of calendar events, starting with the event at skipToEventNumber
     //Size of calendar event set is set by pageSize
-    public void getEventList(int pageSize, int skipToEventNumber)
-    {
+    public void getEventList(int pageSize, int skipToEventNumber) {
         if (mCalendarEvents == null)
             mCalendarEvents = new CalendarEvents();
 
@@ -302,13 +290,12 @@ public class O365CalendarModel  {
                 .orderBy("Start")
                 .skip(skipToEventNumber)
                 .read();
-              
+
 
         Futures.addCallback(results, new FutureCallback<List<Event>>() {
 
             @Override
-            public void onSuccess(final List<Event> result)
-            {
+            public void onSuccess(final List<Event> result) {
                 loadEventsIntoModel(result);
                 setEventCollection eventData = new setEventCollection(mCalendarEvents.ITEMS);
 
@@ -316,13 +303,12 @@ public class O365CalendarModel  {
             }
 
             @Override
-            public void onFailure(final Throwable t)
-            {
+            public void onFailure(final Throwable t) {
                 //Clear any calendar list content
                 mCalendarEvents = null;
                 Log.e("Failed to get events: "
-                                + APIErrorMessageHelper.getErrorMessage(t.getMessage())
-                        ,"O365CalendarModel.getEventList");
+                        + APIErrorMessageHelper.getErrorMessage(t.getMessage())
+                        , "O365CalendarModel.getEventList");
                 setEventCollection eventData = new setEventCollection(mCalendarEvents.ITEMS);
                 mEventAddedListener.OnEventsAdded(eventData);
             }
@@ -330,14 +316,11 @@ public class O365CalendarModel  {
         return;
     }
 
-    private void loadEventsIntoModel(List<Event> events)
-    {
-        try
-        {
+    private void loadEventsIntoModel(List<Event> events) {
+        try {
             this.getCalendar().ITEMS.clear();
             this.getCalendar().ITEM_MAP.clear();
-            for (Event e : events)
-            {
+            for (Event e : events) {
                 O365Calendar_Event calendarEvent = this.createEvent(e.getId(), e);
                 ItemBody itemBody = e.getBody();
                 if (itemBody != null)
@@ -367,8 +350,7 @@ public class O365CalendarModel  {
                 calendarEvent.setSubject(e.getSubject());
                 addItem(calendarEvent);
             }
-        } catch (Exception ex)
-        {
+        } catch (Exception ex) {
             String exceptionMessage = ex.getMessage();
             Log.e("RetrieveEventsTask", exceptionMessage);
         }
@@ -379,18 +361,15 @@ public class O365CalendarModel  {
         this.getCalendar().ITEM_MAP.put(item.id, item);
     }
 
-    public void setActivity(Activity activity)
-    {
+    public void setActivity(Activity activity) {
         mApplication = (O365APIsStart_Application) activity.getApplication();
     }
 
-    public O365CalendarModel(Parcel in)
-    {
+    public O365CalendarModel(Parcel in) {
 
     }
 
-    public O365CalendarModel(Activity activity)
-    {
+    public O365CalendarModel(Activity activity) {
         if (activity == null)
             return;
         mApplication = (O365APIsStart_Application) activity.getApplication();
@@ -420,34 +399,29 @@ public class O365CalendarModel  {
         // Sets the subject property of an event and
         // sets the event item body (content) with the
         // same subject string
-        public void setSubject(String Subject)
-        {
+        public void setSubject(String Subject) {
             subject = Subject;
-            if (this.itemBody != null)
-            {
+            if (this.itemBody != null) {
                 this.itemBody.setContent(Subject);
                 this.itemBody.setContentType(BodyType.Text);
                 thisEvent.setSubject(Subject);
             }
         }
 
-        public void setEvent(Event event)
-        {
+        public void setEvent(Event event) {
             thisEvent = event;
             this.id = event.getId();
         }
 
         // Updates the subject of the event
-        public void updateSubject(String Subject)
-        {
+        public void updateSubject(String Subject) {
             subject = Subject;
             if (thisEvent != null)
                 thisEvent.setSubject(Subject);
         }
 
         // Returns the subject of the event
-        public String getSubject()
-        {
+        public String getSubject() {
             String returnValue = "";
             if (thisEvent != null)
                 returnValue = subject;
@@ -457,22 +431,18 @@ public class O365CalendarModel  {
             return returnValue;
         }
 
-        public String getID()
-        {
+        public String getID() {
             return this.id;
         }
 
         // Returns a semi-colon delimited list of attendee
         // email addresses
-        public String getAttendees()
-        {
+        public String getAttendees() {
             // Get any previously invited attendees
-            if (thisEvent.getAttendees() != null)
-            {
+            if (thisEvent.getAttendees() != null) {
                 attendees = "";
                 List<Attendee> attendeeList = thisEvent.getAttendees();
-                for (Attendee a : attendeeList)
-                {
+                for (Attendee a : attendeeList) {
                     String charSeparator = "";
                     String attendeeAddress = a.getEmailAddress().getAddress();
 
@@ -491,15 +461,13 @@ public class O365CalendarModel  {
             return attendees;
         }
 
-        public void setID(String newId)
-        {
+        public void setID(String newId) {
             id = newId;
         }
 
 
         // Add new attendees to the existing list of event attendees
-        public void setAttendees(String anAttendee)
-        {
+        public void setAttendees(String anAttendee) {
             if (thisEvent.getAttendees() != null)
                 thisEvent.getAttendees().clear();
 
@@ -512,8 +480,7 @@ public class O365CalendarModel  {
             pattern = Pattern.compile(EMAIL_PATTERN);
 
             String[] attendeeArray = anAttendee.split(";");
-            for (String attendeeString : attendeeArray)
-            {
+            for (String attendeeString : attendeeArray) {
                 // Add attendee if attendeeString is an email address
                 matcher = pattern.matcher(attendeeString);
                 if (matcher.matches())
@@ -521,8 +488,7 @@ public class O365CalendarModel  {
             }
         }
 
-        private void makeAnAttendee(String anAttendee)
-        {
+        private void makeAnAttendee(String anAttendee) {
             // Works for new attendee added to event
             this.attendees = anAttendee;
             Attendee attendee1 = new Attendee();
@@ -540,48 +506,39 @@ public class O365CalendarModel  {
         }
 
         // Sets the location of an event
-        public void setLocation(Location location)
-        {
+        public void setLocation(Location location) {
             locationString = location.getDisplayName();
             this.location = location;
         }
 
         // Sets the location in the OutlookServices event object
-        public void setLocation(String Location)
-        {
+        public void setLocation(String Location) {
             locationString = Location;
-            if (this.location != null)
-            {
+            if (this.location != null) {
                 this.location.setDisplayName(Location);
                 thisEvent.setLocation(this.location);
-            }
-            else
-            {
+            } else {
                 Location newLocation = new Location();
                 newLocation.setDisplayName(Location);
                 thisEvent.setLocation(newLocation);
             }
         }
 
-        public void setItemBody(ItemBody body)
-        {
+        public void setItemBody(ItemBody body) {
             this.itemBody = body;
             this.itemBodyString = body.getContent();
         }
 
-        public String getItemBody()
-        {
+        public String getItemBody() {
             return itemBodyString;
         }
 
-        public String getLocation()
-        {
+        public String getLocation() {
             return locationString;
         }
 
         public void setStartDate(int yearValue, int monthValue, int dayValue, int hourValue,
-                int minuteValue)
-        {
+                                 int minuteValue) {
             Calendar startDate = thisEvent.getStart();
             if (startDate == null)
                 startDate = new GregorianCalendar(
@@ -592,46 +549,42 @@ public class O365CalendarModel  {
             startDate.setTimeZone(TimeZone.getDefault());
             startDate.set(
                     yearValue
-                    ,monthValue
-                    ,dayValue
-                    ,hourValue
-                    ,minuteValue);
+                    , monthValue
+                    , dayValue
+                    , hourValue
+                    , minuteValue);
 
             thisEvent.setStart(startDate);
         }
 
         public void setEndDate(int yearValue, int monthValue, int dayValue, int hourValue,
-                int minuteValue)
-        {
+                               int minuteValue) {
             Calendar endDate = thisEvent.getEnd();
             if (endDate == null)
                 endDate = new GregorianCalendar(
                         yearValue
-                        ,monthValue
-                        ,dayValue);
+                        , monthValue
+                        , dayValue);
 
             endDate.setTimeZone(TimeZone.getDefault());
             endDate.set(
                     yearValue
-                    ,monthValue
-                    ,dayValue
-                    ,hourValue
-                    ,minuteValue);
+                    , monthValue
+                    , dayValue
+                    , hourValue
+                    , minuteValue);
             thisEvent.setEnd(endDate);
         }
 
-        public Calendar getStartDateTime()
-        {
+        public Calendar getStartDateTime() {
             return thisEvent.getStart();
         }
 
-        public Calendar getEndDateTime()
-        {
+        public Calendar getEndDateTime() {
             return thisEvent.getEnd();
         }
 
-        public Event getEvent()
-        {
+        public Event getEvent() {
             return thisEvent;
         }
 
@@ -641,8 +594,7 @@ public class O365CalendarModel  {
 
         }
 
-        public O365Calendar_Event(String id)
-        {
+        public O365Calendar_Event(String id) {
             this.id = id;
             thisEvent = new Event();
             thisEvent.setId(this.id);

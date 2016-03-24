@@ -5,36 +5,36 @@
 package com.microsoft.office365.starter.interfaces;
 
 public interface OnOperationCompleteListener {
-	class OperationResult {
-		String mOperationResult;
-		String mOperation;
-		String mid;
+    class OperationResult {
+        String mOperationResult;
+        String mOperation;
+        String mid;
 
-		public String getOperationResult() {
-			return mOperationResult;
-		}
+        public String getOperationResult() {
+            return mOperationResult;
+        }
 
-		public String getOperation() {
-			return mOperation;
-		}
+        public String getOperation() {
+            return mOperation;
+        }
 
-		public String getId() {
-			return mid;
-		}
+        public String getId() {
+            return mid;
+        }
 
-		// operation: the CRUD operation attempted
-		// operationResult: The result of the CRUD operation
-		// id: The id of the entity that was operated on
-		public OperationResult(String operation, String operationResult,
-				String id) {
-			mOperation = operation;
-			mOperationResult = operationResult;
-			mid = id;
-		}
+        // operation: the CRUD operation attempted
+        // operationResult: The result of the CRUD operation
+        // id: The id of the entity that was operated on
+        public OperationResult(String operation, String operationResult,
+                               String id) {
+            mOperation = operation;
+            mOperationResult = operationResult;
+            mid = id;
+        }
 
-	}
+    }
 
-	public void onOperationComplete(OperationResult opResult);
+    public void onOperationComplete(OperationResult opResult);
 }
 // *********************************************************
 //

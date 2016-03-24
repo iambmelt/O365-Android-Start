@@ -4,8 +4,6 @@
 
 package com.microsoft.office365.starter.FilesFolders;
 
-import com.microsoft.office365.starter.O365APIsStart_Application;
-import com.microsoft.office365.starter.R;
 import android.app.Activity;
 import android.app.Fragment;
 import android.os.Bundle;
@@ -14,87 +12,90 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.EditText;
 
+import com.microsoft.office365.starter.O365APIsStart_Application;
+import com.microsoft.office365.starter.R;
+
 public class FileUpdateFragment extends Fragment {
 
-	private String mContents = null;
-	private Callbacks mListener;
+    private String mContents = null;
+    private Callbacks mListener;
 
-	/**
-	 * A callback interface that all activities containing this fragment must
-	 * implement. This mechanism allows activities to be notified of item
-	 * selections.
-	 */
-	public interface Callbacks {
-		/**
-		 * Callback for when an item has been selected.
-		 */
-		public void onContentsUpdated(String updatedContent);
+    /**
+     * A callback interface that all activities containing this fragment must
+     * implement. This mechanism allows activities to be notified of item
+     * selections.
+     */
+    public interface Callbacks {
+        /**
+         * Callback for when an item has been selected.
+         */
+        public void onContentsUpdated(String updatedContent);
 
-		public void onFileUpdateCancelled();
-	}
+        public void onFileUpdateCancelled();
+    }
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
         O365APIsStart_Application application = (O365APIsStart_Application) getActivity()
-				.getApplication();
-		if (application.getDisplayedFile() != null)
-			mContents = application.getDisplayedFile().getContents();
+                .getApplication();
+        if (application.getDisplayedFile() != null)
+            mContents = application.getDisplayedFile().getContents();
 
-	}
+    }
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		View rootView = inflater.inflate(R.layout.fragment_file_detail_update,
-				container, false);
-		final EditText editView = (EditText) rootView
-				.findViewById(R.id.file_detail_update);
-		if (editView != null && mContents != null)
-			editView.setText(mContents);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_file_detail_update,
+                container, false);
+        final EditText editView = (EditText) rootView
+                .findViewById(R.id.file_detail_update);
+        if (editView != null && mContents != null)
+            editView.setText(mContents);
 
 
-		// Done button click event handler
-		rootView.findViewById(R.id.actionbar_done).setOnClickListener(
-				new View.OnClickListener() {
-					@Override
-					public void onClick(View v) {
-						mContents = editView.getText().toString();
+        // Done button click event handler
+        rootView.findViewById(R.id.actionbar_done).setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        mContents = editView.getText().toString();
 
-						// Call parent activity listener to post updated
-						// contents to server.
-						mListener.onContentsUpdated(mContents);
-					}
-				});
+                        // Call parent activity listener to post updated
+                        // contents to server.
+                        mListener.onContentsUpdated(mContents);
+                    }
+                });
 
-		// Cancel button click event handler
-		rootView.findViewById(R.id.actionbar_cancel).setOnClickListener(
-				new View.OnClickListener() {
-					@Override
-					public void onClick(View v) {
+        // Cancel button click event handler
+        rootView.findViewById(R.id.actionbar_cancel).setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
 
-						// Call parent activity listener to remove this
-						// fragment.
-						mListener.onFileUpdateCancelled();
-						mListener = null;
-					}
-				});
+                        // Call parent activity listener to remove this
+                        // fragment.
+                        mListener.onFileUpdateCancelled();
+                        mListener = null;
+                    }
+                });
 
-		return rootView;
-	}
+        return rootView;
+    }
 
-	@Override
-	public void onAttach(Activity activity) {
-		super.onAttach(activity);
-		try {
-			mListener = (Callbacks) activity;
-		} catch (ClassCastException e) {
-			throw new ClassCastException(
-					activity.toString()
-							+ " must implement File Update Fragment Callbacks interface");
-		}
-	}
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mListener = (Callbacks) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(
+                    activity.toString()
+                            + " must implement File Update Fragment Callbacks interface");
+        }
+    }
 
 }
 // *********************************************************

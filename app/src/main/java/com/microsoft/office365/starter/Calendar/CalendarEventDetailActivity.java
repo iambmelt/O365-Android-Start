@@ -4,38 +4,37 @@
 
 package com.microsoft.office365.starter.Calendar;
 
-import com.microsoft.office365.starter.O365APIsStart_Application;
-import com.microsoft.office365.starter.R;
-import com.microsoft.office365.starter.Calendar.O365CalendarModel.O365Calendar_Event;
-import com.microsoft.office365.starter.interfaces.NoticeDialogListener;
-import com.microsoft.office365.starter.interfaces.OnOperationCompleteListener;
-import com.microsoft.office365.starter.helpers.DeleteDialogFragment;
-
-import android.content.Intent;
-import android.content.pm.ActivityInfo;
-import android.os.Bundle;
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
 import android.app.Fragment;
 import android.app.ProgressDialog;
+import android.content.Intent;
+import android.content.pm.ActivityInfo;
+import android.os.Bundle;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
+
+import com.microsoft.office365.starter.Calendar.O365CalendarModel.O365Calendar_Event;
+import com.microsoft.office365.starter.O365APIsStart_Application;
+import com.microsoft.office365.starter.R;
+import com.microsoft.office365.starter.helpers.DeleteDialogFragment;
+import com.microsoft.office365.starter.interfaces.NoticeDialogListener;
+import com.microsoft.office365.starter.interfaces.OnOperationCompleteListener;
 
 /**
  * This activity is created when the device is in small screen mode. It is NOT used when the device
  * is a tablet of 7" or larger. An activity representing a single CalendarEvent detail screen. This
  * activity is only used on handset devices. On tablet-size devices, item details are presented
  * side-by-side with a list of items in a {@link CalendarEventListActivity}.
- * <p>
+ * <p/>
  * This activity is mostly just a 'shell' activity containing nothing more than a
  * {@link CalendarEventDetailFragment}.
  */
 public class CalendarEventDetailActivity extends Activity implements NoticeDialogListener,
         OnOperationCompleteListener,
-        View.OnClickListener
-{
+        View.OnClickListener {
     public O365CalendarModel mCalendarModel;
     private O365APIsStart_Application mApplication;
     private DeleteDialogFragment mDeleteDialog;
@@ -56,32 +55,28 @@ public class CalendarEventDetailActivity extends Activity implements NoticeDialo
 
         mCalendarModel = ((O365APIsStart_Application) getApplication()).getCalendarModel();
 
-        if (savedInstanceState == null)
-        {
+        if (savedInstanceState == null) {
             // Create the detail fragment and add it to the activity
             // using a fragment transaction.
             Bundle arguments = new Bundle();
             if (getIntent()
                     .getAction()
-                    .equals(Intent.ACTION_INSERT))
-            {
+                    .equals(Intent.ACTION_INSERT)) {
                 CalendarEventFragmentView createFragment = new CalendarEventFragmentView();
                 createFragment.setArguments(arguments);
                 getFragmentManager()
                         .beginTransaction()
                         .add(R.id.calendarevent_detail_container, createFragment)
                         .commit();
-            }
-            else if (getIntent()
+            } else if (getIntent()
                     .getAction()
-                    .equals(Intent.ACTION_EDIT))
-            {
+                    .equals(Intent.ACTION_EDIT)) {
                 // Get the calendar event to update
                 mItem = mCalendarModel
                         .getCalendar()
                         .ITEM_MAP
-                                .get(getIntent().getStringExtra(
-                                        CalendarEventDetailFragment.ARG_ITEM_ID));
+                        .get(getIntent().getStringExtra(
+                                CalendarEventDetailFragment.ARG_ITEM_ID));
 
                 // Pass the id of the event to the view fragment that will be opened
                 arguments.putString(
@@ -94,19 +89,15 @@ public class CalendarEventDetailActivity extends Activity implements NoticeDialo
                 getFragmentManager().beginTransaction()
                         .add(R.id.calendarevent_detail_container, fragment)
                         .commit();
-            }
-            else if (getIntent()
+            } else if (getIntent()
                     .getAction()
-                    .equals(Intent.ACTION_DELETE))
-            {
+                    .equals(Intent.ACTION_DELETE)) {
                 CalendarEventDetailFragment deleteFragment = new CalendarEventDetailFragment();
                 deleteFragment.setArguments(arguments);
                 getFragmentManager().beginTransaction()
                         .add(R.id.calendarevent_detail_container, deleteFragment)
                         .commit();
-            }
-            else
-            {
+            } else {
                 CalendarEventDetailFragment deleteFragment = new CalendarEventDetailFragment();
                 deleteFragment.setArguments(arguments);
                 getFragmentManager().beginTransaction()
@@ -136,8 +127,7 @@ public class CalendarEventDetailActivity extends Activity implements NoticeDialo
     @Override
     public void onDialogPositiveClick(Fragment dialog) {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
-        if (dialog != mDeleteDialog)
-        {
+        if (dialog != mDeleteDialog) {
             mDialog = new ProgressDialog(this);
             mDialog.setTitle("Updating an event...");
             mDialog.setMessage("Please wait.");
@@ -151,8 +141,7 @@ public class CalendarEventDetailActivity extends Activity implements NoticeDialo
 
     @Override
     public void onDialogPositiveClick(Fragment dialog, O365Calendar_Event editedEvent,
-            boolean newItemFlag)
-    {
+                                      boolean newItemFlag) {
         setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LOCKED);
         // post the event to server based on formAction
         mDialog = new ProgressDialog(this);
@@ -187,8 +176,7 @@ public class CalendarEventDetailActivity extends Activity implements NoticeDialo
             public void run() {
                 setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_USER);
 
-                if (mDialog.isShowing())
-                {
+                if (mDialog.isShowing()) {
                     mDialog.dismiss();
                 }
 

@@ -7,23 +7,23 @@ package com.microsoft.office365.starter.interfaces;
 import com.microsoft.office365.starter.FilesFolders.O365FileModel;
 
 public interface OnFileChangedEventListener {
-	public class Event {
-		public enum eventType {
-			contentsChanged, fileCreated, fileDeleted
-		}
+    public class Event {
+        public enum eventType {
+            contentsChanged, fileCreated, fileDeleted
+        }
 
-		eventType id = eventType.contentsChanged;
+        eventType id = eventType.contentsChanged;
 
-		public eventType getEventType() {
-			return id;
-		}
+        public eventType getEventType() {
+            return id;
+        }
 
-		public void setEventType(eventType value) {
-			id = value;
-		}
-	}
+        public void setEventType(eventType value) {
+            id = value;
+        }
+    }
 
-	public void onFileChangedEvent(O365FileModel fileItem, Event event);
+    public void onFileChangedEvent(O365FileModel fileItem, Event event);
 }
 // *********************************************************
 //

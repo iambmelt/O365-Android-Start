@@ -4,8 +4,8 @@
 
 package com.microsoft.office365.starter.FilesFolders;
 
-import android.os.Bundle;
 import android.app.Fragment;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -21,67 +21,67 @@ import com.microsoft.office365.starter.interfaces.OnFileChangedEventListener;
  * or a {@link com.microsoft.office365.starter.FilesFolders.FileDetailActivity} on handsets.
  */
 public class FileDetailFragment extends Fragment implements
-		OnFileChangedEventListener {
-	private String mContents = null;
-	private O365APIsStart_Application mApplication = null;
-	/**
-	 * The fragment argument representing the item ID that this fragment
-	 * represents.
-	 */
-	public static final String ARG_ITEM_ID = "item_id";
+        OnFileChangedEventListener {
+    private String mContents = null;
+    private O365APIsStart_Application mApplication = null;
+    /**
+     * The fragment argument representing the item ID that this fragment
+     * represents.
+     */
+    public static final String ARG_ITEM_ID = "item_id";
 
-	/**
-	 * Mandatory empty constructor for the fragment manager to instantiate the
-	 * fragment (e.g. upon screen orientation changes).
-	 */
-	public FileDetailFragment() {
-	}
+    /**
+     * Mandatory empty constructor for the fragment manager to instantiate the
+     * fragment (e.g. upon screen orientation changes).
+     */
+    public FileDetailFragment() {
+    }
 
-	@Override
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
-		mApplication = (O365APIsStart_Application) getActivity()
-				.getApplication();
-		if (mApplication.getDisplayedFile() != null)
-			mContents = mApplication.getDisplayedFile().getContents();
-	}
+        mApplication = (O365APIsStart_Application) getActivity()
+                .getApplication();
+        if (mApplication.getDisplayedFile() != null)
+            mContents = mApplication.getDisplayedFile().getContents();
+    }
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		View rootView = inflater.inflate(R.layout.fragment_file_detail,
-				container, false);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View rootView = inflater.inflate(R.layout.fragment_file_detail,
+                container, false);
 
-		// Show the file content as text in a TextView.
-		if (mContents != null)
-			((TextView) rootView.findViewById(R.id.file_detail))
-					.setText(mContents);
+        // Show the file content as text in a TextView.
+        if (mContents != null)
+            ((TextView) rootView.findViewById(R.id.file_detail))
+                    .setText(mContents);
 
 
-		return rootView;
-	}
+        return rootView;
+    }
 
-	// Called by parent activity when a new file is being displayed
-	public void refresh(O365FileModel fileItem) {
-		onFileChangedEvent(fileItem, null);
-	}
+    // Called by parent activity when a new file is being displayed
+    public void refresh(O365FileModel fileItem) {
+        onFileChangedEvent(fileItem, null);
+    }
 
-	// When file contents are changed, or new file was read from server, render
-	// the new contents to the TextView.
-	@Override
-	public void onFileChangedEvent(O365FileModel fileItem, Event event) {
-		String fileContents;
-		if (fileItem == null)
-			fileContents = "";
-		 else
-			fileContents = fileItem.getContents();
+    // When file contents are changed, or new file was read from server, render
+    // the new contents to the TextView.
+    @Override
+    public void onFileChangedEvent(O365FileModel fileItem, Event event) {
+        String fileContents;
+        if (fileItem == null)
+            fileContents = "";
+        else
+            fileContents = fileItem.getContents();
 
-		TextView textView = (TextView) getView().findViewById(
-				R.id.file_detail);
-		textView.setText(fileContents);
-		mApplication.setDisplayedFile(fileItem);
-	}
+        TextView textView = (TextView) getView().findViewById(
+                R.id.file_detail);
+        textView.setText(fileContents);
+        mApplication.setDisplayedFile(fileItem);
+    }
 }
 //*********************************************************
 //

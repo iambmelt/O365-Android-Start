@@ -4,8 +4,6 @@
 
 package com.microsoft.office365.starter.MainActivity;
 
-import com.microsoft.office365.starter.R;
-
 import android.app.Fragment;
 import android.os.Bundle;
 import android.view.LayoutInflater;
@@ -13,30 +11,32 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
 
+import com.microsoft.office365.starter.R;
+
 public class MainReadmeFragment extends Fragment {
 
-	private WebView mReadmeWebView;
+    private WebView mReadmeWebView;
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container,
-			Bundle savedInstanceState) {
-		View fragmentView = inflater.inflate(R.layout.fragment_main_readme,
-				container, false);
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View fragmentView = inflater.inflate(R.layout.fragment_main_readme,
+                container, false);
 
-		// Load the readme text into the WebView
-		mReadmeWebView = (WebView) fragmentView
-				.findViewById(R.id.readmeWebView);
-		mReadmeWebView.setBackgroundColor(getResources().getColor(
-				R.color.ApplicationPageBackgroundThemeBrush));
-		String readmeHtml = getResources().getString(
-				R.string.mainActivity_Readme);
-		mReadmeWebView.loadData(readmeHtml, "text/html", "UTF-8");
-		mReadmeWebView.setVisibility(View.VISIBLE);
-		// Inflate the layout for this fragment
-		return fragmentView;
-	}
+        // Load the readme text into the WebView
+        mReadmeWebView = (WebView) fragmentView
+                .findViewById(R.id.readmeWebView);
+        mReadmeWebView.setBackgroundColor(getResources().getColor(
+                R.color.ApplicationPageBackgroundThemeBrush));
+        String readmeHtml = getResources().getString(
+                R.string.mainActivity_Readme);
+        mReadmeWebView.loadData(readmeHtml, "text/html", "UTF-8");
+        mReadmeWebView.setVisibility(View.VISIBLE);
+        // Inflate the layout for this fragment
+        return fragmentView;
+    }
 
-	
+
 }
 // *********************************************************
 //

@@ -5,19 +5,19 @@
 package com.microsoft.office365.starter.interfaces;
 
 public interface OnServicesDiscoveredListener {
-	class Event {
-		private boolean servicesDiscovered = false;
+    class Event {
+        private boolean servicesDiscovered = false;
 
-		public boolean servicesAreDiscovered() {
-			return servicesDiscovered;
-		}
+        public boolean servicesAreDiscovered() {
+            return servicesDiscovered;
+        }
 
-		public void setServicesAreDiscovered(boolean value) {
+        public void setServicesAreDiscovered(boolean value) {
             servicesDiscovered = value;
-		}
-	}
+        }
+    }
 
-	public void onServicesDiscoveredEvent(Event event);
+    public void onServicesDiscoveredEvent(Event event);
 }
 // *********************************************************
 //
